@@ -3,7 +3,7 @@ Baremetal cloud (aka the alternator)
 
 Goal
 ----
-Make managin baremetals as easy as virtual machines.
+Make managing baremetals as easy as virtual machines.
 
 Proof-of-concept
 ----------------
