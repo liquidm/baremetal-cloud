@@ -1,0 +1,38 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/config
+
+cd ${BAREMETAL_ROOT}/boot
+wget http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs
+unsquashfs -f -d ${BAREMETAL_ROOT} ${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs
+
+# virtual mount for operational chroot
+for dir in /dev /dev/pts /proc /sys; do
+    mount --bind $dir ${BAREMETAL_ROOT}/$dir
+done
+
+# dns
+rm -f ${BAREMETAL_ROOT}/etc/resolv.conf
+cp /etc/resolv.conf ${BAREMETAL_ROOT}/etc/resolv.conf
+
+# ssh
+mkdir ${BAREMETAL_ROOT}/root/.ssh
+chmod 700 ${BAREMETAL_ROOT}/root/.ssh/
+cp /root/.ssh/authorized* ${BAREMETAL_ROOT}/root/.ssh
+spawn_chroot "ssh-keygen -A"
+
+# timezone
+cp ${BAREMETAL_ROOT}/usr/share/zoneinfo/UTC ${BAREMETAL_ROOT}/etc/localtime
+echo "UTC" > ${BAREMETAL_ROOT}/etc/timezone
+
+# make apt operational and remove unnecessary packages
+spawn_chroot "apt-get update"
+spawn_chroot "apt-get remove -y cloud-guest-utils rsyslog lxcfs open-iscsi"
+spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
+
+# ensure services
+spawn_chroot "systemctl disable systemd-networkd.service"
+spawn_chroot "systemctl enable systemd-networkd.service"
+spawn_chroot "systemctl disable ssh.service"
+spawn_chroot "systemctl enable ssh.service"

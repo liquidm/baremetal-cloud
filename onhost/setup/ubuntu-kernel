@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/config
+
+# install default kernel
+spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install linux-generic extlinux grub-efi-amd64"

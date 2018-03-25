@@ -1,0 +1,12 @@
+#!/bin/bash
+
+KERNEL_OPTIONS="console=tty1 net.ifnames=0 biosdevname=0 pti=off" # WARNING: pti=on unless you know what it means
+BAREMETAL_ROOT="/mnt/baremetal"
+
+spawn_chroot() {
+  local cmd=$1
+
+  echo -e '#!/bin/bash -l\n'${cmd}'\nexit $?' > ${BAREMETAL_ROOT}/tmp/spawn.sh
+  chmod +x ${BAREMETAL_ROOT}/tmp/spawn.sh
+  chroot ${BAREMETAL_ROOT} /tmp/spawn.sh
+}

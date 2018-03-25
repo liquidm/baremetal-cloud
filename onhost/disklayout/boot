@@ -1,0 +1,59 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/config
+
+# check if there is a regular block device
+if [[ "${BOOT_DEVICE}" == "" ]]; then
+  BOOT_DEVICE=/dev/`lsblk -l|grep disk|cut -f 1 -d ' '|grep -v nvme|sort|head -1`
+fi
+# check if there is an nvme device
+if [[ "${BOOT_DEVICE}" == "" ]]; then
+  BOOT_DEVICE=/dev/`lsblk -l|grep disk|cut -f 1 -d ' '|grep nvme|sort|head -1`
+fi
+
+if [[ "${BOOT_DEVICE}" == nvme* ]]; then
+  PARTITON_PREFIX="p"
+else
+  PARTITON_PREFIX=""
+fi
+
+export BOOT_DEVICE
+export PARTITON_PREFIX
+
+echo Installing on ${BOOT_DEVICE}, root will be ${BOOT_DEVICE}${PARTITON_PREFIX}3
+
+sgdisk -Z ${BOOT_DEVICE}
+parted ${BOOT_DEVICE} --script mktable gpt
+partprobe
+parted ${BOOT_DEVICE} --script mkpart EFI fat16 1MiB 10MiB
+parted ${BOOT_DEVICE} --script mkpart boot ext4 10MiB 3GiB
+parted ${BOOT_DEVICE} --script mkpart root ext4 3GiB 64GiB
+parted ${BOOT_DEVICE} --script set 1 msftdata on
+parted ${BOOT_DEVICE} --script set 2 legacy_boot on
+
+mkfs.vfat -R 2 -S 512 -n EFI ${BOOT_DEVICE}${PARTITON_PREFIX}1
+mkfs.ext4 -F -L boot ${BOOT_DEVICE}${PARTITON_PREFIX}2
+mkfs.ext4 -F -L root ${BOOT_DEVICE}${PARTITON_PREFIX}3
+
+# /
+mkdir -p ${BAREMETAL_ROOT}
+mount /${BOOT_DEVICE}${PARTITON_PREFIX}3 ${BAREMETAL_ROOT}
+
+# /boot
+mkdir ${BAREMETAL_ROOT}/boot
+mount /${BOOT_DEVICE}${PARTITON_PREFIX}2 ${BAREMETAL_ROOT}/boot
+
+# /efi
+mkdir ${BAREMETAL_ROOT}/efi 
+mount -t vfat ${BOOT_DEVICE}${PARTITON_PREFIX}1 ${BAREMETAL_ROOT}/efi
+
+# fstab
+mkdir ${BAREMETAL_ROOT}/etc
+cat <<E=O=F >${BAREMETAL_ROOT}/etc/fstab
+UUID=$(blkid -s UUID -o value ${BOOT_DEVICE}${PARTITON_PREFIX}3)	/	ext4	defaults	0 1
+UUID=$(blkid -s UUID -o value ${BOOT_DEVICE}${PARTITON_PREFIX}2)	/boot	ext4	defaults	1 2
+${BOOT_DEVICE}${PARTITON_PREFIX}1					/efi	vfat	defaults	0 0
+E=O=F
+
+cat ${BAREMETAL_ROOT}/etc/fstab
