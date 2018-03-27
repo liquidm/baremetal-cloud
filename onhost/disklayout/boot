@@ -2,39 +2,44 @@
 
 ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . ${ONHOST}/setup/boot-device
-echo Installing on ${BOOT_DEVICE}, root will be ${BOOT_DEVICE}${PARTITON_PREFIX}3
 
 sgdisk -Z ${BOOT_DEVICE}
 parted ${BOOT_DEVICE} --script mktable gpt
-partprobe
 parted ${BOOT_DEVICE} --script mkpart EFI fat16 1MiB 10MiB
 parted ${BOOT_DEVICE} --script mkpart boot ext4 10MiB 3GiB
 parted ${BOOT_DEVICE} --script mkpart root ext4 3GiB 64GiB
 parted ${BOOT_DEVICE} --script set 1 msftdata on
 parted ${BOOT_DEVICE} --script set 2 legacy_boot on
+sleep 5 # these seem to be necessary
+partprobe ${BOOT_DEVICE}
+sleep 5 # these seem to be necessary
 
-mkfs.vfat -R 2 -S 512 -n EFI ${BOOT_DEVICE}${PARTITON_PREFIX}1
-mkfs.ext4 -F -L boot ${BOOT_DEVICE}${PARTITON_PREFIX}2
-mkfs.ext4 -F -L root ${BOOT_DEVICE}${PARTITON_PREFIX}3
+PARTITION_EFI=${BOOT_DEVICE}${PARTITON_PREFIX}1
+PARTITION_BOOT=${BOOT_DEVICE}${PARTITON_PREFIX}2
+PARTITION_ROOT=${BOOT_DEVICE}${PARTITON_PREFIX}3
+
+mkfs.vfat -R 2 -S 512 -n EFI ${PARTITION_EFI}
+mkfs.ext4 -F -L boot ${PARTITION_BOOT}
+mkfs.ext4 -F -L root ${PARTITION_ROOT}
 
 # /
 mkdir -p ${BAREMETAL_ROOT}
-mount /${BOOT_DEVICE}${PARTITON_PREFIX}3 ${BAREMETAL_ROOT}
+mount ${PARTITION_ROOT} ${BAREMETAL_ROOT}
 
 # /boot
-mkdir ${BAREMETAL_ROOT}/boot
-mount /${BOOT_DEVICE}${PARTITON_PREFIX}2 ${BAREMETAL_ROOT}/boot
+mkdir -p ${BAREMETAL_ROOT}/boot
+mount ${PARTITION_BOOT} ${BAREMETAL_ROOT}/boot
 
 # /efi
-mkdir ${BAREMETAL_ROOT}/efi 
-mount -t vfat ${BOOT_DEVICE}${PARTITON_PREFIX}1 ${BAREMETAL_ROOT}/efi
+mkdir -p ${BAREMETAL_ROOT}/efi
+mount -t vfat ${PARTITION_EFI} ${BAREMETAL_ROOT}/efi
 
 # fstab
-mkdir ${BAREMETAL_ROOT}/etc
+mkdir -p ${BAREMETAL_ROOT}/etc
 cat <<E=O=F >${BAREMETAL_ROOT}/etc/fstab
-UUID=$(blkid -s UUID -o value ${BOOT_DEVICE}${PARTITON_PREFIX}3)	/	ext4	defaults	0 1
-UUID=$(blkid -s UUID -o value ${BOOT_DEVICE}${PARTITON_PREFIX}2)	/boot	ext4	defaults	1 2
-${BOOT_DEVICE}${PARTITON_PREFIX}1					/efi	vfat	defaults	0 0
+UUID=$(blkid -s UUID -o value ${PARTITION_ROOT})	/	ext4	defaults	0 1
+UUID=$(blkid -s UUID -o value ${PARTITION_BOOT})	/boot	ext4	defaults	1 2
+${PARTITION_EFI}					/efi	vfat	defaults	0 0
 E=O=F
 
 cat ${BAREMETAL_ROOT}/etc/fstab
