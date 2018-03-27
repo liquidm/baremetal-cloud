@@ -1,5 +1,6 @@
 #!/bin/bash
 
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . ${ONHOST}/setup/boot-device
 echo Installing on ${BOOT_DEVICE}, root will be ${BOOT_DEVICE}${PARTITON_PREFIX}3
 
