@@ -4,15 +4,20 @@ ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . ${ONHOST}/config
 
 # check if there is a regular block device
-if [[ "${BOOT_DEVICE}" == "" ]]; then
+if ! [[ -b "${BOOT_DEVICE}" ]]; then
   BOOT_DEVICE=/dev/`lsblk -l|grep disk|cut -f 1 -d ' '|grep -v nvme|sort|head -1`
 fi
 # check if there is an nvme device
-if [[ "${BOOT_DEVICE}" == "" ]]; then
+if ! [[ -b "${BOOT_DEVICE}" ]]; then
   BOOT_DEVICE=/dev/`lsblk -l|grep disk|cut -f 1 -d ' '|grep nvme|sort|head -1`
 fi
 
-if [[ "${BOOT_DEVICE}" == nvme* ]]; then
+if ! [[ -b "${BOOT_DEVICE}" ]]; then
+  echo "Can't autodect a block device to install on, please set BOOT_DEVICE env"
+  exit 1
+fi
+
+if [[ "${BOOT_DEVICE}" == /dev/nvme* ]]; then
   PARTITON_PREFIX="p"
 else
   PARTITON_PREFIX=""
