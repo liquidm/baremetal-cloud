@@ -8,6 +8,8 @@ cat <<E=O=F >${BAREMETAL_ROOT}/etc/default/grub.d/60-liquidm-settings.cfg
 GRUB_CMDLINE_LINUX_DEFAULT="$KERNEL_OPTIONS"
 E=O=F
 spawn_chroot "grub-install --removable --target=x86_64-efi --boot-directory=/boot --efi-directory=/efi ${BOOT_DEVICE}"
+spawn_chroot "update-grub"
+
 
 # legacy boot
 spawn_chroot "dd bs=440 count=1 conv=notrunc if=/usr/lib/EXTLINUX/gptmbr.bin of=${BOOT_DEVICE}"
