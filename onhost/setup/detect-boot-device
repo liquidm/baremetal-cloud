@@ -1,0 +1,26 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/config
+
+DISKS=()
+for disk in `lsblk -l|grep disk|cut -f 1 -d ' '|grep -v nvme|sort`; do
+  DISKS+=("/dev/$disk")
+done
+
+NVMES=()
+for nvme in `lsblk -l|grep disk|cut -f 1 -d ' '|grep nvme|sort`; do
+  NVMES+=("/dev/$nvme")
+done
+
+if ! [[ -b "${BOOT_DEVICES[0]}" ]]; then
+  BOOT_DEVICES=(${DISKS[*]})
+fi
+
+if ! [[ -b "${BOOT_DEVICES[0]}" ]]; then
+  BOOT_DEVICES=(${NVMES[*]})
+fi
+
+export BOOT_DEVICES
+export DISKS
+export NVMES

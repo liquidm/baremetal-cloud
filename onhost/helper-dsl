@@ -1,0 +1,261 @@
+#!/bin/bash
+spawn_chroot() {
+  local cmd=$1
+
+  echo -e '#!/bin/bash -l\n'${cmd}'\nexit $?' > ${BAREMETAL_ROOT}/tmp/spawn.sh
+  chmod +x ${BAREMETAL_ROOT}/tmp/spawn.sh
+  chroot ${BAREMETAL_ROOT} /tmp/spawn.sh
+}
+
+part() {
+  local disk="/dev/$(echo ${1} | sed -e 's:^/dev/::' -e 's:/:_:g')"
+  local minor=$2
+  local type=$3
+  local size=${4:-0}
+  shift 4
+  local label=${*:-"alternatored"}
+
+  localdisks=($(echo  "${localdisks[@]} ${disk}" | tr " " "\n" | sort -u | tr '\n' ' '))
+  localparts+=( "${disk}:${minor}:${type}:${size}:${label}" )
+}
+
+alternate_wipe() {
+  echo ">>> alternate_wipe"
+  for disk in ${localdisks[@]}; do
+    echo $disk
+    
+    dd if=/dev/zero of=$disk bs=446 count=1 2>/dev/null
+
+    sgdisk -Z -g ${disk}
+    
+    partprobe ${disk}
+    echo "---"
+  done
+
+  echo kernel dust settling
+  sleep 1
+  echo "<<< alternate_wipe"
+}
+
+altermate_partition() {
+  echo ">>> altermate_partition"
+  for part in "${localparts[@]}"; do
+    echo $part
+    local tokens=($(echo $part | tr ":" "\n"))
+
+    local disk=${tokens[0]}
+    local minor=${tokens[1]}
+    local type=${tokens[2]}
+    local size=${tokens[3]}
+    local label=${tokens[@]:4}
+
+    sgdisk -n "${minor}::+${size}" -t "${minor}:${type}" -c "${minor}:${label}" ${disk}
+    partprobe ${disk}
+    echo "---"
+  done
+
+  echo kernel dust settling
+  sleep 1
+
+  echo "<<< altermate_partition"
+}
+
+md() {
+  local minor=${1}
+  local raid_level=${2}
+  local size=0
+
+  if ! [[ -b ${3} ]]; then
+    size=${3}
+    shift 3
+  else
+    shift 2
+  fi
+
+  # create partition (convention: mdX => partX)
+  local devices=()
+  for device in ${*}; do
+    part ${device} ${minor} fd00 ${size} "md${minor} raid${raid_level}"
+    if [[ ${device} == /dev/nvme* ]]; then
+      devices+=("${device}p${minor}")
+    else
+      device+=("${device}${minor}")
+    fi 
+  done
+
+  localmds+=("${minor}:${raid_level}:${devices[*]}")
+}
+
+alternate_md() {
+  echo ">>> alternate_md"
+
+  for md in "${localmds[@]}"; do
+    echo $md
+    local tokens=($(echo $md | tr ":" "\n"))
+
+    local minor=${tokens[0]}
+    local raid_level=${tokens[1]}
+    local devices=("${tokens[@]:2}")
+
+    # ensure we have the /dev/md${minor}
+    local mddevice="/dev/md${minor}"
+    if [ ! -e ${mddevice} ]; then
+      echo mknod ${mddevice} b 9 ${minor}
+    fi
+
+    mdadm --create --run ${mddevice} --level=${raid_level} --raid-devices=${#devices[@]} ${devices[@]}
+
+    echo "---"
+  done
+  echo "<<< alternate_md"
+}
+
+format() {
+  local device="/dev/$(echo ${1} | sed -e 's:^/dev/::' -e 's:/:_:g')"
+  local partition=$2
+  local fstype=$3
+  shift 3
+  local options=$*
+
+  if [[ ${device} == /dev/nvme* ]]; then
+    device="${device}p${partition}"
+  else
+    device="${device}${partition}"
+  fi
+
+  localfmts+=("${device}:${fstype}:${*}")
+}
+
+alternate_format() {
+  echo ">>> alternate_format"
+
+  for fmt in "${localfmts[@]}"; do
+    echo $fmt
+    local tokens=($(echo $fmt | tr ":" "\n"))
+
+    local device=${tokens[0]}
+    local fstype=${tokens[1]}
+    local options=("${tokens[@]:2}")
+
+    yes | mkfs.${fstype} ${device} ${options[@]}
+    echo "---"
+  done
+  echo "<<< alternate_format"
+}
+
+mountfs() {
+  local device="/dev/$(echo ${1} | sed -e 's:^/dev/::' -e 's:/:_:g')"
+  local partition=${2}
+  local fstype=${3}
+  local mountpoint=${4}
+  shift 4
+  local mountopts=${*}
+
+  if [[ ${device} == /dev/nvme* ]]; then
+    device="${device}p${partition}"
+  else
+    device="${device}${partition}"
+  fi
+
+  [[ -z ${mountopts} ]] && mountopts="defaults"
+  [[ -z ${mountpoint} ]] && mountpoint="none"
+
+  local tmpmount="${device}:${fstype}:${mountpoint}:${mountopts}"
+  if [[ ${mountpoint} == "/" ]]; then
+    localmounts=("$tmpmount" "${localmounts[@]}")
+    ROOT_PARTITION=${device}
+  else
+    localmounts+=("$tmpmount")
+  fi
+}
+
+alternate_mount_baremetal() {
+  echo ">>> alternate_mount_baremetal"
+
+  for mnt in "${localmounts[@]}"; do
+    echo $mnt
+    local tokens=($(echo $mnt | tr ":" "\n"))
+
+    local device=${tokens[0]}
+    local fstype=${tokens[1]}
+    local mountpoint=${BAREMETAL_ROOT}${tokens[2]}
+
+    mkdir -p ${mountpoint}
+    mount -t ${fstype} ${device} ${mountpoint}
+    echo "---"
+  done
+
+  for special in /dev /dev/pts /proc /sys; do
+    mkdir -p ${BAREMETAL_ROOT}$special
+    mount --bind $special ${BAREMETAL_ROOT}$special
+  done
+
+  echo "<<< alternate_mount_baremetal"
+}
+
+alternate_fstab() {
+  echo ">>> alternate_fstab"
+  mkdir -p ${BAREMETAL_ROOT}/etc
+  echo "# alternatored on $(date)" > ${BAREMETAL_ROOT}/etc/fstab
+
+  for mnt in "${localmounts[@]}"; do
+    echo $mnt
+    local tokens=($(echo $mnt | tr ":" "\n"))
+
+    local device=${tokens[0]}
+    local fstype=${tokens[1]}
+    local mountpoint=${tokens[2]}
+    local options=("${tokens[@]:3}")
+
+    local devuuid=$(blkid -s UUID -o value ${device})
+    if [ "${mountpoint}" == "/" ]; then
+      local dump_pass="0 1"
+    elif [ "${mountpoint}" == "/boot" -o "${mountpoint}" == "/boot/" ]; then
+      local dump_pass="1 2"
+    else
+      local dump_pass="0 0"
+    fi
+
+    echo -e "UUID=${devuuid}\t${mountpoint}\t${type}\t${mountopts}\t${dump_pass}" >> ${BAREMETAL_ROOT}/etc/fstab
+  done
+  echo "<<< alternate_fstab"
+}
+
+alternate_bless() {
+  # efi boot
+  mkdir -p ${BAREMETAL_ROOT}/etc/default/grub.d
+  cat <<E=O=F >${BAREMETAL_ROOT}/etc/default/grub.d/60-liquidm-settings.cfg
+GRUB_CMDLINE_LINUX_DEFAULT="$KERNEL_OPTIONS"
+E=O=F
+
+  spawn_chroot "grub-install --removable --target=x86_64-efi --boot-directory=/boot --efi-directory=/efi ${BOOT_DEVICES}"
+  spawn_chroot "update-grub"
+
+
+  # legacy boot
+  spawn_chroot "dd bs=440 count=1 conv=notrunc if=/usr/lib/EXTLINUX/gptmbr.bin of=${BOOT_DEVICES}"
+  spawn_chroot "extlinux --install /boot"
+  cd ${BAREMETAL_ROOT}/boot
+  cat <<E=O=F >${BAREMETAL_ROOT}/boot/extlinux.conf
+DEFAULT linux
+  SAY Legacy boot via EXTLINUX...
+LABEL linux
+  KERNEL `ls vmlinuz-*|tail -1`
+  APPEND ro root=${ROOT_PARTITION} initrd=`ls initrd.img*|tail -1` $KERNEL_OPTIONS
+E=O=F
+
+  # default network config
+  local device=$(ip route | awk '/default/ { print $5 }')
+  local gateway=$(ip route list | grep default | awk '{ print $3 }')
+  local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
+
+  cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
+[Match]
+Name=${device}
+
+[Network]
+Address=${ipaddress}
+Gateway=${gateway}
+E=O=F
+
+}

@@ -7,11 +7,6 @@ cd ${BAREMETAL_ROOT}/boot
 wget http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs
 unsquashfs -f -d ${BAREMETAL_ROOT} ${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs
 
-# virtual mount for operational chroot
-for dir in /dev /dev/pts /proc /sys; do
-    mount --bind $dir ${BAREMETAL_ROOT}/$dir
-done
-
 # dns
 rm -f ${BAREMETAL_ROOT}/etc/resolv.conf
 cp /etc/resolv.conf ${BAREMETAL_ROOT}/etc/resolv.conf

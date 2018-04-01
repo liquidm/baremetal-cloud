@@ -8,12 +8,15 @@ Make managing baremetals as easy as virtual machines.
 Proof-of-concept
 ----------------
 ```
-onhost/setup/rescue-env
-onhost/disklayout/boot
-onhost/install/ubuntu-bionic
-```
+onhost/setup/rescue-env # assumes apt and ensures dependencies
 
-should give you a dual booting legacy/efi ubuntu bionic in the first 64g of the primary block device.
+. onhost/disklayout/two-disk-raid0 # check the dsl, you should get along just fine
+baremetal_config # the complete state is in env, verify it. If you get an error, redo disklayout using /bin/bash
+
+. onhost/install/ubuntu-bionic # this will wipe disks, backups are your friend
+
+reboot # it should just work!
+```
 
 Backlog
 -------

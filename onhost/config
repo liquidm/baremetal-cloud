@@ -3,10 +3,32 @@
 KERNEL_OPTIONS="console=tty1 net.ifnames=0 biosdevname=0 pti=off" # WARNING: pti=on unless you know what it means
 BAREMETAL_ROOT="/mnt/baremetal"
 
-spawn_chroot() {
-  local cmd=$1
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. ${ONHOST}/helper-dsl
 
-  echo -e '#!/bin/bash -l\n'${cmd}'\nexit $?' > ${BAREMETAL_ROOT}/tmp/spawn.sh
-  chmod +x ${BAREMETAL_ROOT}/tmp/spawn.sh
-  chroot ${BAREMETAL_ROOT} /tmp/spawn.sh
+baremetal_config() {
+  echo Disks: ${DISKS[*]}
+  echo NVMEs: ${NVMES[*]}
+  echo
+  echo Boot device is ${BOOT_DEVICES[0]}
+  echo "---"
+  echo "\$localdisks = all your disks are belong to us"
+  for entry in "${localdisks[@]}"; do echo $entry; done
+  echo "---"
+
+  echo "\$localparts = partion disk:minor:type:size:label"
+  for entry in "${localparts[@]}"; do echo $entry; done
+  echo "---"
+
+  echo "\$localmds = md minor:level:devices"
+  for entry in "${localmds[@]}"; do echo $entry; done
+  echo "---"
+
+  echo "\$localfmts = device:type:options"
+  for entry in "${localfmts[@]}"; do echo $entry; done
+  echo "---"
+
+  echo "\$localmounts = device:type:mountpoint:options"
+  for entry in "${localmounts[@]}"; do echo $entry; done
+  echo "---"
 }
