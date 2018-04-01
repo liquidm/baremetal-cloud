@@ -9,7 +9,7 @@ localmds=()
 localfmts=()
 localmounts=()
 
-part ${BOOT_DEVICES[0]} 128 0700 10M boot
+part ${BOOT_DEVICES[0]} 128 0700 10M efi
 format ${BOOT_DEVICES[0]} 128 vfat -R 2 -S 512 -n EFI
 mountfs ${BOOT_DEVICES[0]} 128 vfat /efi
 
