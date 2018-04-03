@@ -79,7 +79,7 @@ md() {
     if [[ ${device} == /dev/nvme* ]]; then
       devices+=("${device}p${minor}")
     else
-      device+=("${device}${minor}")
+      devices+=("${device}${minor}")
     fi 
   done
 
