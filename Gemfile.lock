@@ -1,0 +1,394 @@
+GIT
+  remote: git://github.com/liquidm/leaseweb-rest-api.git
+  revision: 9757fd9531e456adc30f598c671954da299877a0
+  branch: production
+  specs:
+    leaseweb-rest-api (1.1.6)
+      httparty
+
+GIT
+  remote: git://github.com/liquidm/ruby-grafana-api.git
+  revision: 5da3a0ac41a3f0b5d7966acb154c34b75f2cd441
+  specs:
+    grafana-api (0.2.0)
+      json
+      rest-client (~> 1.8)
+
+GIT
+  remote: git://github.com/zenops/ovh-rest.git
+  revision: e2ee61014a3a5bfebec5fed72cd2752f5bb75f0a
+  specs:
+    ovh-rest (0.0.2)
+
+GIT
+  remote: https://github.com/hollow/tailor.git
+  revision: 1301010d756fe575a87a77a165724a0eb469d242
+  specs:
+    tailor (1.3.1)
+      log_switch (>= 0.3.0)
+      term-ansicolor (>= 1.0.5)
+      text-table (>= 1.2.2)
+
+GIT
+  remote: https://github.com/zenops/knife-dsl.git
+  revision: b225849a8c70601d806bedd77659882a8bfa4bd9
+  specs:
+    knife-dsl (0.1.0)
+      chef
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (5.1.6)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    ast (2.4.0)
+    awesome_print (1.8.0)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
+    backports (3.11.1)
+    bond (0.5.1)
+    brice (0.4.1)
+      nuggets (~> 1.4)
+    builder (3.2.3)
+    cane (3.0.0)
+      parallel
+    celluloid (0.17.3)
+      celluloid-essentials
+      celluloid-extras
+      celluloid-fsm
+      celluloid-pool
+      celluloid-supervision
+      timers (>= 4.1.1)
+    celluloid-essentials (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-extras (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-fsm (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-pool (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-supervision (0.20.6)
+      timers (>= 4.1.1)
+    chef (13.8.5)
+      addressable
+      bundler (>= 1.10)
+      chef-config (= 13.8.5)
+      chef-zero (>= 13.0)
+      diff-lcs (~> 1.2, >= 1.2.4)
+      erubis (~> 2.7)
+      ffi-yajl (~> 2.2)
+      highline (~> 1.6, >= 1.6.9)
+      iniparse (~> 1.4)
+      iso8601 (~> 0.9.1)
+      mixlib-archive (~> 0.4)
+      mixlib-authentication (~> 1.4)
+      mixlib-cli (~> 1.7)
+      mixlib-log (~> 1.3)
+      mixlib-shellout (~> 2.0)
+      net-sftp (~> 2.1, >= 2.1.2)
+      net-ssh (>= 2.9, < 5.0)
+      net-ssh-multi (~> 1.2, >= 1.2.1)
+      ohai (~> 13.0)
+      plist (~> 3.2)
+      proxifier (~> 1.0)
+      rspec-core (~> 3.5)
+      rspec-expectations (~> 3.5)
+      rspec-mocks (~> 3.5)
+      rspec_junit_formatter (~> 0.2.0)
+      serverspec (~> 2.7)
+      specinfra (~> 2.10)
+      syslog-logger (~> 1.6)
+      uuidtools (~> 2.1.5)
+    chef-config (13.8.5)
+      addressable
+      fuzzyurl
+      mixlib-config (~> 2.0)
+      mixlib-shellout (~> 2.0)
+      tomlrb (~> 1.2)
+    chef-zero (13.1.0)
+      ffi-yajl (~> 2.2)
+      hashie (>= 2.0, < 4.0)
+      mixlib-log (~> 1.3)
+      rack (~> 2.0)
+      uuidtools (~> 2.1)
+    codeclimate-engine-rb (0.4.1)
+      virtus (~> 1.0)
+    coderay (1.1.2)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
+    concurrent-ruby (1.0.5)
+    cucumber-core (3.1.0)
+      backports (>= 3.8.0)
+      cucumber-tag_expressions (~> 1.1.0)
+      gherkin (>= 5.0.0)
+    cucumber-tag_expressions (1.1.1)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
+    diff-lcs (1.3)
+    diplomat (2.0.2)
+      faraday (~> 0.9)
+      json
+    docile (1.3.0)
+    domain_name (0.5.20170404)
+      unf (>= 0.0.5, < 1.0.0)
+    equalizer (0.0.11)
+    erubis (2.7.0)
+    faraday (0.14.0)
+      multipart-post (>= 1.2, < 3)
+    ffi (1.9.23)
+    ffi-yajl (2.3.1)
+      libyajl2 (~> 1.2)
+    foodcritic (13.0.0)
+      cucumber-core (>= 1.3)
+      erubis
+      ffi-yajl (~> 2.0)
+      nokogiri (>= 1.5, < 2.0)
+      rake
+      rufus-lru (~> 1.0)
+      treetop (~> 1.4)
+    fuubar (2.3.1)
+      rspec-core (~> 3.0)
+      ruby-progressbar (~> 1.4)
+    fuzzyurl (0.9.0)
+    gherkin (5.0.0)
+    gpgme (2.0.16)
+      mini_portile2 (~> 2.3)
+    hashie (3.5.7)
+    hetzner-api (1.2.0)
+      httparty (~> 0.14.0)
+      json
+      thor
+      xml-simple
+    highline (1.7.10)
+    hirb (0.7.3)
+    hitimes (1.2.6)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    httparty (0.14.0)
+      multi_xml (>= 0.5.2)
+    i18n (1.0.0)
+      concurrent-ruby (~> 1.0)
+    ice_nine (0.11.2)
+    iniparse (1.4.4)
+    ipaddress (0.8.3)
+    iso8601 (0.9.1)
+    jmx4r (0.1.4)
+    json (2.1.0)
+    knife-attribute (1.1.0)
+      chef (>= 0.11)
+    knife-backup (0.0.12)
+      chef (>= 0.10.10)
+    libyajl2 (1.2.0)
+    liquid-development (0.2.1)
+      awesome_print
+      bond
+      brice
+      cane
+      fuubar
+      hirb
+      pry
+      rake
+      reek
+      rib
+      ripl
+      rspec
+      simplecov
+      tailor
+      timecop
+      yard
+    liquid-ext (3.5.3)
+      activesupport
+      erubis
+      jmx4r
+      mixlib-cli
+      multi_json
+      terminal-table
+    listen (3.1.5)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
+    log_switch (1.0.0)
+    method_source (0.9.0)
+    mime-types (2.99.3)
+    mini_portile2 (2.3.0)
+    minitest (5.11.3)
+    mixlib-archive (0.4.1)
+      mixlib-log
+    mixlib-authentication (1.4.2)
+    mixlib-cli (1.7.0)
+    mixlib-config (2.2.6)
+      tomlrb
+    mixlib-log (1.7.1)
+    mixlib-shellout (2.3.2)
+    multi_json (1.13.1)
+    multi_xml (0.6.0)
+    multipart-post (2.0.0)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (4.2.0)
+    net-ssh-gateway (2.0.0)
+      net-ssh (>= 4.0.0)
+    net-ssh-multi (1.2.1)
+      net-ssh (>= 2.6.5)
+      net-ssh-gateway (>= 1.2.0)
+    net-telnet (0.1.1)
+    netrc (0.11.0)
+    nokogiri (1.8.2)
+      mini_portile2 (~> 2.3.0)
+    nuggets (1.5.0)
+    ohai (13.8.0)
+      chef-config (>= 12.5.0.alpha.1, < 14)
+      ffi (~> 1.9)
+      ffi-yajl (~> 2.2)
+      ipaddress
+      mixlib-cli
+      mixlib-config (~> 2.0)
+      mixlib-log (>= 1.7.1, < 2.0)
+      mixlib-shellout (~> 2.0)
+      plist (~> 3.1)
+      systemu (~> 2.6.4)
+      wmi-lite (~> 1.0)
+    open4 (1.3.4)
+    parallel (1.12.1)
+    parser (2.5.0.5)
+      ast (~> 2.4.0)
+    plist (3.4.0)
+    polyglot (0.3.5)
+    proxifier (1.0.3)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    public_suffix (3.0.2)
+    rack (2.0.4)
+    rainbow (3.0.0)
+    rake (12.3.1)
+    rb-fsevent (0.10.3)
+    rb-inotify (0.9.10)
+      ffi (>= 0.5.0, < 2)
+    reek (4.8.0)
+      codeclimate-engine-rb (~> 0.4.0)
+      parser (>= 2.5.0.0, < 2.6)
+      rainbow (~> 3.0)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
+    rib (1.5.4)
+    ripl (0.7.1)
+      bond (~> 0.5.1)
+    rspec (3.7.0)
+      rspec-core (~> 3.7.0)
+      rspec-expectations (~> 3.7.0)
+      rspec-mocks (~> 3.7.0)
+    rspec-core (3.7.1)
+      rspec-support (~> 3.7.0)
+    rspec-expectations (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-its (1.2.0)
+      rspec-core (>= 3.0.0)
+      rspec-expectations (>= 3.0.0)
+    rspec-mocks (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-support (3.7.1)
+    rspec_junit_formatter (0.2.3)
+      builder (< 4)
+      rspec-core (>= 2, < 4, != 2.12.0)
+    ruby-progressbar (1.9.0)
+    ruby-shadow (2.5.0)
+    ruby_dep (1.5.0)
+    rufus-lru (1.1.0)
+    rvm (1.11.3.9)
+    serverspec (2.41.3)
+      multi_json
+      rspec (~> 3.0)
+      rspec-its
+      specinfra (~> 2.72)
+    sfl (2.3)
+    simplecov (0.16.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
+    specinfra (2.73.2)
+      net-scp
+      net-ssh (>= 2.7, < 5.0)
+      net-telnet
+      sfl
+    syslog-logger (1.6.8)
+    systemu (2.6.5)
+    term-ansicolor (1.6.0)
+      tins (~> 1.0)
+    terminal-table (1.8.0)
+      unicode-display_width (~> 1.1, >= 1.1.1)
+    text-table (1.2.4)
+    thor (0.20.0)
+    thread_safe (0.3.6)
+    timecop (0.9.1)
+    timers (4.1.2)
+      hitimes
+    tins (1.16.3)
+    tomlrb (1.2.6)
+    treetop (1.6.10)
+      polyglot (~> 0.3)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
+    unicode-display_width (1.3.0)
+    uuidtools (2.1.5)
+    virtus (1.0.5)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
+    webhdfs (0.8.0)
+      addressable
+    wmi-lite (1.0.0)
+    xml-simple (1.1.5)
+    xmlrpc (0.3.0)
+    yard (0.9.12)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  celluloid
+  chef (= 13.8.5)
+  diplomat
+  foodcritic
+  gpgme
+  grafana-api!
+  hetzner-api
+  highline
+  httparty
+  knife-attribute
+  knife-backup
+  knife-dsl!
+  leaseweb-rest-api!
+  liquid-development
+  liquid-ext
+  listen
+  open4
+  ovh-rest!
+  rake
+  rb-inotify
+  ruby-shadow
+  rvm
+  tailor!
+  webhdfs
+  xmlrpc
+
+BUNDLED WITH
+   1.16.1
