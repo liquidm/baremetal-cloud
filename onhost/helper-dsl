@@ -246,7 +246,7 @@ alternate_fstab() {
       local dump_pass="0 0"
     fi
 
-    echo -e "UUID=${devuuid}\t${mountpoint}\t${type}\t${mountopts}\t${dump_pass}" >> ${BAREMETAL_ROOT}/etc/fstab
+    echo -e "UUID=${devuuid}\t${mountpoint}\t${fstype}\t${options}\t${dump_pass}" >> ${BAREMETAL_ROOT}/etc/fstab
   done
   echo "<<< alternate_fstab"
 }

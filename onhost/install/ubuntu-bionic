@@ -16,4 +16,5 @@ alternate_mount_baremetal
 . ${ONHOST}/setup/ubuntu
 . ${ONHOST}/setup/ubuntu-kernel
 
+alternate_fstab
 alternate_bless
