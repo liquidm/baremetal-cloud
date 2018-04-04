@@ -21,13 +21,33 @@ part() {
 
 alternate_wipe() {
   echo ">>> alternate_wipe"
+  for special in /dev /dev/pts /proc /sys; do
+    umount ${BAREMETAL_ROOT}$special 2>/dev/null
+  done
+
+  for m in /dev/md?*; do
+    umount -l $m
+    mdadm --stop $m
+  done
+
   for disk in ${localdisks[@]}; do
     echo $disk
-    
-    dd if=/dev/zero of=$disk bs=446 count=1 2>/dev/null
 
-    sgdisk -Z -g ${disk}
-    
+    for x in ${disk}*; do
+      if [[ -e ${x} ]]; then
+        echo ${x}
+        umount -l ${x} 2>/dev/null
+        for m in /dev/md?*; do
+          mdadm ${m} -r ${x} 2>/dev/null
+          mdadm --zero-superblock ${x} 2>/dev/null
+        done
+      fi
+    done
+
+    dd if=/dev/zero of=${disk} bs=446 count=1
+
+    sgdisk -Z ${disk}
+
     partprobe ${disk}
     echo "---"
   done
@@ -52,6 +72,16 @@ altermate_partition() {
     sgdisk -n "${minor}::+${size}" -t "${minor}:${type}" -c "${minor}:${label}" ${disk}
     partprobe ${disk}
     echo "---"
+  done
+
+  for legacyboot in "${locallegacyboot[@]}"; do
+    local tokens=($(echo $legacyboot | tr ":" "\n"))
+
+    local disk=${tokens[0]}
+    local minor=${tokens[1]}
+
+    sgdisk -A "${minor}:set:2" ${disk}
+    parted ${disk} pmbr_boot on # TODO: some bios don't boot w/o it, but some won't when this is set
   done
 
   echo kernel dust settling
@@ -80,7 +110,7 @@ md() {
       devices+=("${device}p${minor}")
     else
       devices+=("${device}${minor}")
-    fi 
+    fi
   done
 
   localmds+=("${minor}:${raid_level}:${devices[*]}")
