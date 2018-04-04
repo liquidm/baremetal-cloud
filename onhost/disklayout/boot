@@ -16,3 +16,4 @@ mountfs ${BOOT_DEVICES[0]} 128 vfat /efi
 part ${BOOT_DEVICES[0]} 127 8300 4086M boot
 format ${BOOT_DEVICES[0]} 127 ext4
 mountfs ${BOOT_DEVICES[0]} 127 ext4 /boot
+locallegacyboot=("${BOOT_DEVICES[0]}:127")
