@@ -2,7 +2,7 @@
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd $ROOT_DIR
-echo assuming $ROOT_DIR as root directory of baremetal-cloud
+echo Assuming $ROOT_DIR as root directory of baremetal-cloud
 
 curl -s -k -L http://git.io/bootstrap-rvm-bundler | bash -s
 cd $ROOT_DIR
