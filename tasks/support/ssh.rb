@@ -1,0 +1,36 @@
+def check_ping(ipaddress)
+  %x(ping -c 1 -W 5 #{ipaddress})
+  reachable = $?.exitstatus == 0
+  sleep(1) if reachable
+  reachable
+end
+
+def ssh_detect(host)
+  File.chmod(0400, PRIVATE_SSH_KEY) # for good measure
+  ssh = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null" #{host[:ipv4]} hostname -f 2>/dev/null}
+
+  unless check_ping(host[:ipv4])
+    host[:down] = true
+    return
+  end
+
+  %x{nmap -p 22 -sT -Pn #{host[:ipv4]}| grep 'open  ssh'}
+  unless $?.success?
+    host[:down] = true
+    return
+  end
+
+  host.delete(:down)
+
+  fqdn = %x{ssh #{ssh}}.chomp
+  if $?.success?
+    host[:fqdn] = fqdn
+    return
+  end
+
+  fqdn = %x{ssh -l root -i #{PRIVATE_SSH_KEY} #{ssh}}.chomp
+  if $?.success?
+    host[:rescue] = true
+    return
+  end
+end

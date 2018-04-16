@@ -3,14 +3,26 @@ require 'hetzner-api'
 require 'ovh/rest'
 require 'fileutils'
 require 'leaseweb-rest-api'
+require 'fileutils'
 
-def leaseweb_api
-  @leaseweb_api ||= Hash[($conf[:leaseweb] || {}).map do |account, config|
-    account_api = LeasewebAPI.new
-    account_api.apiKeyAuth(config[:apikey])
-    account_api.readPrivateKey(PRIVATE_SSH_KEY, false)
-    ["leaseweb.#{account}", account_api]
-  end]
+def sorted_hash(v)
+  if v.is_a? Hash
+    Hash[v.map{|k,v| [k, sorted_hash(v)]}.sort]
+  else
+    v
+  end
+end
+
+def baremetal_isps
+  unless @isps
+    @isps = {}
+
+    # TODO: generic bootstrap
+    hetzner_init
+    leaseweb_init
+    ovh_init
+  end
+  @isps
 end
 
 def baremetals
@@ -18,6 +30,7 @@ def baremetals
     h[File.basename(k)] = YAML.load_file(k) rescue {}
   end
 
+  puts "#{STATEDIR}/hosts/*"
   Dir.glob("#{STATEDIR}/hosts/*").each{|h| state[h] }
 
   state
@@ -29,12 +42,15 @@ def baremetals_persist(state)
     FileUtils.mkdir_p(dirname)
   end
   state.each do |host_id, host|
-    File.open("#{dirname}/#{host_id}", 'w') {|f| f.write host.to_yaml }
+    File.open("#{dirname}/#{host_id}", 'w') {|f| f.write sorted_hash(host).to_yaml }
   end
 end
 
-def baremetal_unique_id(hostname, state = baremetals)
-  host, dc = hostname.scan(/^(.+?)\.(.+)$/).first
+def baremetal_unique_id(pattern, host_info, state = baremetals)
+  existing_host_id, existing_host = state.find{|id,h| host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name]}
+  return existing_host_id if existing_host_id
+
+  host, dc = pattern.scan(/^(.+?)\.(.+)$/).first
   host_type, host_id = host.scan(/^(.+?)(\d*)$/).first
   isp_geo = dc.split('.').last
 
@@ -69,93 +85,52 @@ def baremetal_by_id(isp, id, state = baremetals)
 end
 
 def baremetal_scan_isps(state = baremetals)
-  target_state = state.clone
+  target_state = {}
   known_ids = []
 
-  if $conf[:hetzner] && $conf[:hetzner][:user]
-    h = Hetzner::API.new($conf[:hetzner][:user], $conf[:hetzner][:password])
-    hetzner_servers = h.servers?
-    puts "#{hetzner_servers.length} servers at Hetzner"
-    hetzner_servers.each do |e|
-      print '.'
-      s=e['server']
-      tokens = s['dc'].scan(/(\w+)(\d)/)
-
-      host = baremetal_by_id('hetzner', s['server_number'], target_state)
-      host[:isp][:info] = s['product']
-      host[:ipv4] = s['server_ip']
-
-      naming_convention =  "#{s['product']}-.#{tokens[1][0]}#{tokens[0][1]}#{tokens[1][1]}.#{tokens[0][0]}".downcase
-
-      baremetal_id = baremetal_unique_id(naming_convention, target_state)
-      target_state[baremetal_id] = host
+  baremetal_isps.each do |isp_account, isp_api|
+    known_baremetals = isp_api.scan(state)
+    known_baremetals.each do |baremetal_id, isp_host_info|
+      target_state[baremetal_id] = (state[baremetal_id] || {}).merge(isp_host_info)
       known_ids << baremetal_id
     end
-    puts ''
   end
 
-  leaseweb_api.each do |account, api|
-    resp = api.getV2DedicatedServers
-    if resp['errorMessage']
-      puts resp['errorMessage']
-      next
+  expired_hosts = state.keys - target_state.keys
+  if expired_hosts.size > 0
+    puts "There are #{expired_hosts.size} unknown nodes, removing them now"
+    dirname="#{STATEDIR}/hosts"
+    expired_hosts.each do |host_id|
+      puts host_id
+      target_state.delete(host_id)
+      FileUtils.rm("#{dirname}/#{host_id}")
     end
-
-    metals=resp['servers']
-    unless metals
-      puts "no servers at leaseweb in #{account}?"
-      next
-    end
-    puts "#{metals.length} servers at Leaseweb in #{account}"
-    metals.each do |info|
-      print '.'
-      host = baremetal_by_id(account, info['id'], target_state)
-
-      details = nil
-      details = api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
-
-      host[:isp][:info] = "#{details['specs']['brand']} #{details['specs']['chassis']} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
-      host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first
-
-      naming_convention = "#{info['contract']['internalReference']}.#{info['location']['rack']}.#{info['location']['site'].scan(/\w+/).first}".downcase
-
-      baremetal_id = baremetal_unique_id(naming_convention, target_state)
-      target_state[baremetal_id] = host
-      known_ids << baremetal_id
-    end
-    puts ''
   end
 
-  if $conf[:ovh]
-    ovh = OVH::REST.new($conf[:ovh][:app_key], $conf[:ovh][:app_secret], $conf[:ovh][:consumer_key])
-    ovh_servers = ovh.get('/dedicated/server')
-    puts "#{ovh_servers.length} servers at OVH"
-    ovh_servers.each do |id|
-      print '.'
-      status = ovh.get("/dedicated/server/#{id}/serviceInfos")['status']
-      if status != 'ok'
-        print "(#{id}: #{status})"
-        next
-      end
-      metal = ovh.get("/dedicated/server/#{id}")
-      details = ovh.get("/dedicated/server/#{id}/specifications/hardware")
-      host = baremetal_by_id('ovh', metal['name'], target_state)
-      host[:isp][:info] = "#{details['description']} #{details['diskGroups'].map{|d| d['description']}.join(';')}"
-      host[:ipv4] = metal['ip']
-
-      dc, dc_id = metal['datacenter'].scan(/^(.+?)(\d*)$/).first
-
-      metal['rack']
-
-      details['description'].split(' ')[0].gsub(/\-/,'')
-
-      naming_convention = "#{metal['commercialRange']}-.#{dc_id}-#{metal['rack']}.#{dc}".downcase
-      baremetal_id = baremetal_unique_id(naming_convention, target_state)
-      target_state[baremetal_id] = host
-      known_ids << baremetal_id
-    end
-    puts ''
-  end
-  # todo: use known_ids to clean out expired servers
+  puts "#{target_state.size} active baremetals in your accounts"
   target_state
+end
+
+
+def baremetal_by_human_input(hostparam)
+  hostparam = YAML.load_file(hostparam) rescue hostparam
+
+  if hostparam.is_a? Hash
+    hostparam
+  elsif hostparam.is_a? String
+    bm = baremetals
+    if bm.key? hostparam
+      bm[hostparam]
+    else
+      bm.values.find do |h|
+        h[:fqdn] == hostparam || h[:ipv4] == hostparam || h[:isp][:id] == hostparam
+      end
+    end
+  end
+end
+
+def baremetal_rescue(hostparam)
+  host = baremetal_by_human_input(hostparam)
+
+  puts "Using #{host.to_yaml}"
 end
