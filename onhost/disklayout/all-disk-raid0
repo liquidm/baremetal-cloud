@@ -1,0 +1,14 @@
+#!/bin/bash
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+. ${ONHOST}/disklayout/boot
+
+for disk in ${BOOT_DEVICES[@]:1}; do
+  part $disk 127 8300 4096M boot symmetry
+done
+
+md 1 0 ${BOOT_DEVICES[@]}
+
+format md 1 ext4
+
+mountfs md 1 ext4 /
