@@ -29,6 +29,8 @@ def leaseweb_init
           details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
 
           host[:isp][:info] = "#{details['specs']['brand']} #{details['specs']['chassis']} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
+          host[:isp][:dc] = info['location']['site']
+          host[:isp][:rack] = info['location']['rack']
           host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
 
           naming_convention = "#{details['specs']['chassis'].gsub(/\s/,'')}-#{info['contract']['internalReference']}.#{info['location']['rack']}.#{info['location']['site'].scan(/\w+/).first}".downcase

@@ -135,4 +135,7 @@ def baremetal_rescue(hostparam)
   puts "Using #{host.to_yaml}"
 
   baremetal_isps[host[:isp][:name]].rescue(host)
+  ssh_opts = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null"}
+  sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/onhost root@#{host[:ipv4]}:."
+  sh "ssh -i #{PRIVATE_SSH_KEY} #{ssh_opts} root@#{host[:ipv4]} onhost/setup/rescue-env"
 end

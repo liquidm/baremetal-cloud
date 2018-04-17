@@ -19,11 +19,12 @@ def ovh_init
           details = ovh.get("/dedicated/server/#{id}/specifications/hardware")
           host = baremetal_by_id('ovh', metal['name'], state)
           host[:isp][:info] = "#{details['description']} #{details['diskGroups'].map{|d| d['description']}.join(';')}"
+          host[:isp][:dc] = metal['datacenter']
+          host[:isp][:rack] = metal['rack']
+
           host[:ipv4] = metal['ip']
 
           dc, dc_id = metal['datacenter'].scan(/^(.+?)(\d*)$/).first
-
-          metal['rack']
 
           details['description'].split(' ')[0].gsub(/\-/,'')
 

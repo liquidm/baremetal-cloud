@@ -17,7 +17,7 @@ end
 
 def ssh_detect(host)
   File.chmod(0400, PRIVATE_SSH_KEY) # for good measure
-  ssh = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null" #{host[:ipv4]} hostname -f 2>/dev/null}
+  ssh_opts = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null" #{host[:ipv4]} hostname -f 2>/dev/null}
 
   unless check_ping(host[:ipv4])
     host[:down] = true
@@ -32,13 +32,13 @@ def ssh_detect(host)
 
   host.delete(:down)
 
-  fqdn = %x{ssh #{ssh}}.chomp
+  fqdn = %x{ssh #{ssh_opts}}.chomp
   if $?.success?
     host[:fqdn] = fqdn
     return
   end
 
-  fqdn = %x{ssh -l root -i #{PRIVATE_SSH_KEY} #{ssh}}.chomp
+  fqdn = %x{ssh -l root -i #{PRIVATE_SSH_KEY} #{ssh_opts}}.chomp
   if $?.success?
     host[:rescue] = true
     return

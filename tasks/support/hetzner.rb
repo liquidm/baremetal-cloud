@@ -17,6 +17,7 @@ def hetzner_init
 
           host = baremetal_by_id(isp_id, s['server_number'], state)
           host[:isp][:info] = s['product']
+          host[:isp][:dc], host[:isp][:rack] = s['dc'].split('-') # TODO
           host[:ipv4] = s['server_ip']
 
           naming_convention =  "#{s['product']}-.#{tokens[1][0]}#{tokens[0][1]}#{tokens[1][1]}.#{tokens[0][0]}".downcase
