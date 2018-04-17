@@ -1,6 +1,5 @@
 def hetzner_init
   if $conf[:hetzner] && $conf[:hetzner][:user]
-    puts "configuring Hetzner"
     h = Hetzner::API.new($conf[:hetzner][:user], $conf[:hetzner][:password])
 
     isp_id = 'hetzner'

@@ -133,4 +133,6 @@ def baremetal_rescue(hostparam)
   host = baremetal_by_human_input(hostparam)
 
   puts "Using #{host.to_yaml}"
+
+  baremetal_isps[host[:isp][:name]].rescue(host)
 end

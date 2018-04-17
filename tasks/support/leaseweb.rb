@@ -4,7 +4,7 @@ def leaseweb_init
     account_api.apiKeyAuth(config[:apikey])
     account_api.readPrivateKey(PRIVATE_SSH_KEY, false)
     account = "leaseweb.#{country}"
-    puts "Configuring #{account}"
+    ssh_key = File.read("#{PRIVATE_SSH_KEY}.pub")
 
     baremetal_isps[account] = Class.new do
       define_singleton_method :scan do |state|
@@ -39,6 +39,18 @@ def leaseweb_init
         puts ''
 
         target_state
+      end
+
+      define_singleton_method :rescue do |hostparam|
+        host = baremetal_by_human_input(hostparam)
+        id = host[:isp][:id]
+        puts "putting #{id} into rescue"
+        task = account_api.postV2RescueMode(id, 'GRML', ssh_key)
+        throw task['errorMessage'] if task['errorMessage']
+
+        puts "waiting for #{host[:ipv4]} to reboot"
+        wait_for_ssh(host[:ipv4])
+        puts "#{id} in rescue now"
       end
     end
   end

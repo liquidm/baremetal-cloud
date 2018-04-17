@@ -1,6 +1,5 @@
 def ovh_init
   if $conf[:ovh]
-    puts "configuring OVH"
     ovh = OVH::REST.new($conf[:ovh][:app_key], $conf[:ovh][:app_secret], $conf[:ovh][:consumer_key])
 
     baremetal_isps["ovh"] = Class.new do

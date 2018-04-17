@@ -1,8 +1,18 @@
 def check_ping(ipaddress)
   %x(ping -c 1 -W 5 #{ipaddress})
   reachable = $?.exitstatus == 0
-  sleep(1) if reachable
+  sleep(1)
   reachable
+end
+
+def wait_with_ping(ipaddress, reachable)
+  print "waiting for machine to #{reachable ? "boot" : "shutdown"} "
+
+  while check_ping(ipaddress) != reachable
+    print "."
+  end
+
+  print "\n"
 end
 
 def ssh_detect(host)
@@ -33,4 +43,18 @@ def ssh_detect(host)
     host[:rescue] = true
     return
   end
+end
+
+def wait_for_ssh(fqdn)
+  wait_with_ping(fqdn, false)
+  wait_with_ping(fqdn, true)
+  print "waiting for ssh to be accessible "
+  loop do
+    print "."
+    system("nmap -p 22 -sT -Pn #{fqdn} | grep 'open  ssh' &> /dev/null")
+    break if $?.exitstatus == 0
+    sleep 5
+  end
+  print "\n"
+  sleep 5
 end
