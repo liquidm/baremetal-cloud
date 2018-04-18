@@ -28,7 +28,7 @@ def ovh_init
 
           details['description'].split(' ')[0].gsub(/\-/,'')
 
-          naming_convention = "#{metal['commercialRange']}-.#{dc_id}-#{metal['rack']}.#{dc}".downcase
+          naming_convention = "#{metal['commercialRange']}-#{dc_id}-#{metal['rack']}-.#{dc}".downcase
           baremetal_id = baremetal_unique_id(naming_convention, host, target_state)
           target_state[baremetal_id] = host
         end

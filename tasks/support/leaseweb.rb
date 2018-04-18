@@ -33,9 +33,10 @@ def leaseweb_init
           host[:isp][:rack] = info['location']['rack']
           host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
 
-          naming_convention = "#{details['specs']['chassis'].gsub(/\s/,'')}-#{info['contract']['internalReference']}.#{info['location']['rack']}.#{info['location']['site'].scan(/\w+/).first}".downcase
+          naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '')}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
           baremetal_id = baremetal_unique_id(naming_convention, host, target_state)
+
           target_state[baremetal_id] = host
         end
         puts ''
