@@ -17,7 +17,7 @@ end
 
 def ssh_detect(host)
   File.chmod(0400, PRIVATE_SSH_KEY) # for good measure
-  ssh_opts = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null" #{host[:ipv4]} hostname -f 2>/dev/null}
+  ssh_opts = %{-oBatchMode=yes -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null" #{host[:ipv4]} hostname -f 2>/dev/null}
 
   unless check_ping(host[:ipv4])
     host[:down] = true

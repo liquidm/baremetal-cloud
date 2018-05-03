@@ -22,7 +22,6 @@ def leaseweb_init
         end
         puts "#{metals.length} servers at Leaseweb in #{account}"
         metals.each do |info|
-          print '.'
           host = baremetal_by_id(account, info['id'], state)
 
           details = nil
@@ -40,7 +39,7 @@ def leaseweb_init
 
           naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '')}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
-          baremetal_id = baremetal_unique_id(naming_convention, host, target_state)
+          baremetal_id = baremetal_unique_id(naming_convention, host, state)
 
           target_state[baremetal_id] = host
         end

@@ -13,7 +13,7 @@ begin
     task :check_config do |t|
       metals = baremetals
       metals.each do |host_id, host|
-        puts ">>>  #{host[:ipv4]}"
+        puts ">>>  #{host_id} - #{host[:ipv4]}"
         ssh_detect(host)
         pp host[:fqdn]
       end

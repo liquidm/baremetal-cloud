@@ -47,7 +47,15 @@ def baremetals_persist(state)
 end
 
 def baremetal_unique_id(pattern, host_info, state = baremetals)
-  existing_host_id, existing_host = state.find { |id,h| host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name] }
+  existing_host_id, existing_host = state.find do |id,h|
+    begin
+      host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name] 
+    rescue => e
+      pp h
+      pp host_info
+      throw e
+    end
+  end
 
   if existing_host_id
     print "."
@@ -76,8 +84,8 @@ def baremetal_unique_id(pattern, host_info, state = baremetals)
     host_id += 1 while check.include? host_id
   end
 
-  print "+"
-  "#{host_type}#{host_id}.#{dc}"
+  unique_id = "#{host_type}#{host_id}.#{dc}"
+  print "+[#{unique_id}]"
 end
 
 def baremetal_by_id(isp, id, state = baremetals)
@@ -90,6 +98,7 @@ def baremetal_by_id(isp, id, state = baremetals)
 end
 
 def baremetal_scan_isps(state = baremetals)
+  puts "scannig isps, #{baremetals.size} in local state going in."
   target_state = {}
   known_ids = []
 
