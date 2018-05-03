@@ -46,6 +46,8 @@ Dir[ File.join(File.dirname(__FILE__), 'tasks', '*.rake') ].sort.each do |f|
   load f
 end
 
+sh "tmux new-session -d -s 'baremetal' || true"
+
 task :default do
   puts "baremetal cloud"
   puts "---------------"

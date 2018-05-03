@@ -45,7 +45,7 @@ def ovh_init
         ovh.put("/dedicated/server/#{name}", 'bootId' => 1122, 'monitoring' => false)
         ovh.put("/dedicated/server/#{name}/serviceInfos", 'renew' => {'automatic' => true, 'forced' => false, 'period' => 1, 'deleteAtExpiration' => false})
         ovh.post("/dedicated/server/#{name}/reboot")
-        wait_for_ssh(name, false)
+        wait_for_ssh(name)
         ovh.put("/dedicated/server/#{name}", 'bootId' => 1)
       end
 

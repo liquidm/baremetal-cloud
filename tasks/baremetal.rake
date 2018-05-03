@@ -24,6 +24,23 @@ begin
     task :rescue, :host do |t, args|
       baremetal_rescue(args.host)
     end
+
+    desc "puts rescue into tmux"
+    task :tmux_rescue, :hostparam do |t, args|
+      host = baremetal_by_human_input(args.hostparam)
+
+      sh %Q{tmux new-window -t baremetal -n "#{host[:isp][:id]}"}
+      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; rake baremetal:rescue[#{host[:ipv4]}]"}
+      sh %Q{tmux send-keys -t baremetal Enter}
+    end
+
+    desc "list unhandled"
+    task :unhandled do |t|
+      baremetals.each do |host_id, host|
+        puts host_id unless host[:fqdn]
+      end
+    end
+
   end
 rescue LoadError
   $stderr.puts "Baremetal API cannot be loaded. Skipping some rake tasks ..."
