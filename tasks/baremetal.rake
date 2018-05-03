@@ -49,7 +49,7 @@ begin
 
       ssh_opts = %Q{-l root -i #{PRIVATE_SSH_KEY} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
       sh %Q{tmux new-window -t baremetal -n "#{host[:isp][:id]}"}
-      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; cat #{cmd_file}| ssh #{ssh_opts} #{host[:ipv4]} /bin/bash -l -s"}
+      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; rake baremetal:rescue[#{host[:ipv4]}]; cat #{cmd_file}| ssh #{ssh_opts} #{host[:ipv4]} /bin/bash -l -s"}
       sh %Q{tmux send-keys -t baremetal Enter}
     end
 
