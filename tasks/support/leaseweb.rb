@@ -26,7 +26,12 @@ def leaseweb_init
           host = baremetal_by_id(account, info['id'], state)
 
           details = nil
-          details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
+          begin
+            details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
+          rescue
+            print 'e'
+            retry
+          end
 
           host[:isp][:info] = "#{details['specs']['brand']} #{details['specs']['chassis']} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
           host[:isp][:dc] = info['location']['site']

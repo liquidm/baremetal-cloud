@@ -9,10 +9,9 @@ def ovh_init
         ovh_servers = ovh.get('/dedicated/server')
         puts "#{ovh_servers.length} servers at OVH"
         ovh_servers.each do |id|
-          print '.'
           status = ovh.get("/dedicated/server/#{id}/serviceInfos")['status']
           if status != 'ok'
-            print "(#{id}: #{status})"
+            print "_"
             next
           end
           metal = ovh.get("/dedicated/server/#{id}")
@@ -29,13 +28,27 @@ def ovh_init
           details['description'].split(' ')[0].gsub(/\-/,'')
 
           naming_convention = "#{metal['commercialRange']}-#{dc_id}-#{metal['rack']}-.#{dc}".downcase
-          baremetal_id = baremetal_unique_id(naming_convention, host, target_state)
+          baremetal_id = baremetal_unique_id(naming_convention, host, state)
           target_state[baremetal_id] = host
         end
         puts ''
 
         target_state
       end
+
+      define_singleton_method :rescue do |hostparam|
+        host = baremetal_by_human_input(hostparam)
+        name = host[:isp][:id]
+
+        puts "putting #{name} into rescue"
+
+        ovh.put("/dedicated/server/#{name}", 'bootId' => 1122, 'monitoring' => false)
+        ovh.put("/dedicated/server/#{name}/serviceInfos", 'renew' => {'automatic' => true, 'forced' => false, 'period' => 1, 'deleteAtExpiration' => false})
+        ovh.post("/dedicated/server/#{name}/reboot")
+        wait_for_ssh(name, false)
+        ovh.put("/dedicated/server/#{name}", 'bootId' => 1)
+      end
+
     end
   end
 end

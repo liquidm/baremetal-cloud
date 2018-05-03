@@ -47,8 +47,12 @@ def baremetals_persist(state)
 end
 
 def baremetal_unique_id(pattern, host_info, state = baremetals)
-  existing_host_id, existing_host = state.find{|id,h| host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name]}
-  return existing_host_id if existing_host_id
+  existing_host_id, existing_host = state.find { |id,h| host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name] }
+
+  if existing_host_id
+    print "."
+    return existing_host_id
+  end
 
   host, dc = pattern.scan(/^(.+?)\.(.+)$/).first
   host_type, host_id = host.scan(/^(.+?)(\d*)$/).first
@@ -72,6 +76,7 @@ def baremetal_unique_id(pattern, host_info, state = baremetals)
     host_id += 1 while check.include? host_id
   end
 
+  print "+"
   "#{host_type}#{host_id}.#{dc}"
 end
 
@@ -91,7 +96,7 @@ def baremetal_scan_isps(state = baremetals)
   baremetal_isps.each do |isp_account, isp_api|
     known_baremetals = isp_api.scan(state)
     known_baremetals.each do |baremetal_id, isp_host_info|
-      target_state[baremetal_id] = (state[baremetal_id] || {}).merge(isp_host_info)
+      target_state[baremetal_id] = (state.key?(baremetal_id) ? state[baremetal_id] : {}).merge(isp_host_info)
       known_ids << baremetal_id
     end
   end
