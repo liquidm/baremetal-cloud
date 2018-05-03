@@ -86,6 +86,7 @@ def baremetal_unique_id(pattern, host_info, state = baremetals)
 
   unique_id = "#{host_type}#{host_id}.#{dc}"
   print "+[#{unique_id}]"
+  unique_id
 end
 
 def baremetal_by_id(isp, id, state = baremetals)
