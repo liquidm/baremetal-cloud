@@ -21,7 +21,7 @@ def hetzner_init
 
           naming_convention =  "#{s['product'].split.last}-#{tokens[1][0]}#{tokens[0][1]}#{tokens[1][1]}-.#{tokens[0][0]}".downcase
 
-          target_state[baremetal_unique_id(naming_convention, host, state)] = host
+          target_state[baremetal_unique_id(naming_convention, host, target_state.merge(state))] = host
         end
         puts ''
 
