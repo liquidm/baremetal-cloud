@@ -150,7 +150,7 @@ def baremetal_rescue(hostparam)
   puts "Using #{host.to_yaml}"
 
   baremetal_isps[host[:isp][:name]].rescue(host)
-  ssh_opts = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null"}
+  ssh_opts = %Q{-oBatchMode=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
   loop do
     begin
       sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/onhost root@#{host[:ipv4]}:."

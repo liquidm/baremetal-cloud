@@ -34,6 +34,25 @@ begin
       sh %Q{tmux send-keys -t baremetal Enter}
     end
 
+    desc "bootstrap in tmux"
+    task :tmux_bootstrap, :hostparam, :disklayout do |t, args|
+      throw "needs a disklayout" unless args.disklayout
+      host = baremetal_by_human_input(args.hostparam)
+
+      require 'tmpdir'
+      cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}]")
+      File.open(cmd_file, 'w') do |f|
+        f.puts ". onhost/disklayout/#{args.disklayout}"
+        f.puts ". onhost/install/ubuntu-bionic"
+        f.puts "reboot"
+      end
+
+      ssh_opts = %Q{-l root -i #{PRIVATE_SSH_KEY} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
+      sh %Q{tmux new-window -t baremetal -n "#{host[:isp][:id]}"}
+      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; cat #{cmd_file}| ssh #{ssh_opts} #{host[:ipv4]} /bin/bash -l -s"}
+      sh %Q{tmux send-keys -t baremetal Enter}
+    end
+
     desc "list unhandled"
     task :unhandled do |t|
       baremetals.each do |host_id, host|
