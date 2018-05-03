@@ -141,6 +141,14 @@ def baremetal_rescue(hostparam)
 
   baremetal_isps[host[:isp][:name]].rescue(host)
   ssh_opts = %{-o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "GlobalKnownHostsFile /dev/null"}
-  sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/onhost root@#{host[:ipv4]}:."
-  sh "ssh -i #{PRIVATE_SSH_KEY} #{ssh_opts} root@#{host[:ipv4]} onhost/setup/rescue-env"
+  loop do
+    begin
+      sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/onhost root@#{host[:ipv4]}:."
+      sh "ssh -i #{PRIVATE_SSH_KEY} #{ssh_opts} root@#{host[:ipv4]} onhost/setup/rescue-env"
+      break
+    rescue
+      puts "Looks like ssh isn't really up yet... retrying in 5"
+      sleep 5
+    end
+  end
 end
