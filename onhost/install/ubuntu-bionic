@@ -8,7 +8,7 @@ ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 baremetal_config
 
 alternate_wipe
-altermate_partition
+alternate_partition
 alternate_md
 alternate_format
 alternate_mount_baremetal

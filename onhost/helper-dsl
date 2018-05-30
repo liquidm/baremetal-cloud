@@ -57,8 +57,8 @@ alternate_wipe() {
   echo "<<< alternate_wipe"
 }
 
-altermate_partition() {
-  echo ">>> altermate_partition"
+alternate_partition() {
+  echo ">>> alternate_partition"
   for part in "${localparts[@]}"; do
     echo $part
     local tokens=($(echo $part | tr ":" "\n"))
@@ -87,7 +87,7 @@ altermate_partition() {
   echo kernel dust settling
   sleep 1
 
-  echo "<<< altermate_partition"
+  echo "<<< alternate_partition"
 }
 
 md() {
