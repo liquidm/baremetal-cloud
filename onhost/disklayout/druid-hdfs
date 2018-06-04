@@ -1,11 +1,28 @@
 #!/bin/bash
-ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-. ${ONHOST}/disklayout/boot
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/setup/detect-boot-device
+
+localdisks=()
+localparts=()
+localmds=()
+localfmts=()
+localmounts=()
+
+BOOT_DEVICES=(${NVMES[*]})
+
+part ${BOOT_DEVICES[0]} 128 0700 10M efi
+format ${BOOT_DEVICES[0]} 128 vfat -R 2 -S 512 -n EFI
+mountfs ${BOOT_DEVICES[0]} 128 vfat /efi
+
+part ${BOOT_DEVICES[0]} 127 8300 4086M boot
+format ${BOOT_DEVICES[0]} 127 ext4
+mountfs ${BOOT_DEVICES[0]} 127 ext4 /boot
+locallegacyboot=("${BOOT_DEVICES[0]}:127")
 
 part ${BOOT_DEVICES[1]} 127 8300 4096M boot symmetry
 
-md 1 0 ${BOOT_DEVICES[@]}
+md 1 0 ${DISKS[@]}
 
 format md 1 ext4
 
