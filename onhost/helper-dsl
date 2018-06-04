@@ -81,7 +81,7 @@ alternate_partition() {
     local minor=${tokens[1]}
 
     sgdisk -A "${minor}:set:2" ${disk}
-    parted ${disk} disk_set pmbr_boot on # TODO: some bios don't boot w/o it, but some won't when this is set
+#    parted ${disk} disk_set pmbr_boot on # TODO: some bios don't boot w/o it, but some won't when this is set
   done
 
   echo kernel dust settling
