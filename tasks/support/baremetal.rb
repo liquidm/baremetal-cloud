@@ -107,6 +107,7 @@ def baremetal_scan_isps(state = baremetals)
     known_baremetals = isp_api.scan(state)
     known_baremetals.each do |baremetal_id, isp_host_info|
       target_state[baremetal_id] = (state.key?(baremetal_id) ? state[baremetal_id] : {}).merge(isp_host_info)
+      target_state[baremetal_id][:id] = baremetal_id # helps to have it in the file
       known_ids << baremetal_id
     end
   end
