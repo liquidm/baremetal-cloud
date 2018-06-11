@@ -7,6 +7,6 @@ part ${BOOT_DEVICES[0]} 1 8300
 format ${BOOT_DEVICES[0]} 1 ext4
 mountfs ${BOOT_DEVICES[0]} 1 ext4 /
 
-part ${NVME_DEVICES[0]} 1 8300
-format ${NVME_DEVICES[0]} 1 ext4
-mountfs ${NVME_DEVICES[0]} 1 ext4 /var/app
+part ${NVMES[0]} 1 8300
+format ${NVMES[0]} 1 ext4
+mountfs ${NVMES[0]} 1 ext4 /var/app
