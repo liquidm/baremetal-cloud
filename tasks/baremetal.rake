@@ -30,7 +30,7 @@ begin
       host = baremetal_by_human_input(args.hostparam)
 
       sh %Q{tmux new-window -t baremetal -n "#{host[:isp][:id]}"}
-      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; rake baremetal:rescue[#{host[:ipv4]}]"}
+      sh %Q{tmux send-keys -t baremetal "cd #{ROOT}; rake baremetal:rescue[#{host[:id] || host[:ipv4]}]"}
       sh %Q{tmux send-keys -t baremetal Enter}
     end
 
