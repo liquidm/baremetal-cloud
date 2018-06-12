@@ -15,6 +15,13 @@ GIT
       rest-client (~> 1.8)
 
 GIT
+  remote: git://github.com/liquidm/soyoustart-rest.git
+  revision: 62d0f6ca9e72f37cfde680c9ecb688254c6a1c78
+  branch: soyoustart
+  specs:
+    soyoustart-rest (0.0.2)
+
+GIT
   remote: git://github.com/zenops/ovh-rest.git
   revision: e2ee61014a3a5bfebec5fed72cd2752f5bb75f0a
   specs:
@@ -303,9 +310,10 @@ DEPENDENCIES
   rb-inotify
   ruby-shadow
   rvm
+  soyoustart-rest!
   tailor!
   webhdfs
   xmlrpc
 
 BUNDLED WITH
-   1.16.1
+   1.16.2

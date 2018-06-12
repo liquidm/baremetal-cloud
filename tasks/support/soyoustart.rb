@@ -1,6 +1,6 @@
 def soyoustart_init
   if $conf[:soyoustart]
-    soyoustart = OVH::REST.new($conf[:soyoustart][:app_key], $conf[:soyoustart][:app_secret], $conf[:soyoustart][:consumer_key])
+    soyoustart = Soyoustart::REST.new($conf[:soyoustart][:app_key], $conf[:soyoustart][:app_secret], $conf[:soyoustart][:consumer_key])
 
     baremetal_isps["soyoustart"] = Class.new do
       define_singleton_method :scan do |state|
