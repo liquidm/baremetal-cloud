@@ -10,6 +10,7 @@ gem 'knife-attribute'
 # APIs
 gem 'hetzner-api'
 gem 'ovh-rest', github: 'zenops/ovh-rest'
+gem 'soyoustart-rest', github: 'liquidm/soyoustart-rest', branch: 'soyoustart'
 gem 'leaseweb-rest-api', github: 'liquidm/leaseweb-rest-api', branch: 'production'
 gem 'grafana-api', github: 'liquidm/ruby-grafana-api'
 

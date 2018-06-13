@@ -59,7 +59,8 @@ task :default do
   puts "STATEDIR=#{STATEDIR}: #{File.directory?(STATEDIR)}"
   puts "PRIVATE_SSH_KEY=#{PRIVATE_SSH_KEY}: #{File.exist?(PRIVATE_SSH_KEY)}"
   puts
-  puts "Hetzner account configured:   #{!!$conf[:hetzner]}"
-  puts "OVH account configured:       #{!!$conf[:ovh]}"
-  puts "Leaseweb accounts configured: #{$conf[:leaseweb] && $conf[:leaseweb].keys.join(', ')}"
+  puts "Hetzner account configured:    #{!!$conf[:hetzner]}"
+  puts "OVH account configured:        #{!!$conf[:ovh]}"
+  puts "Soyoustart account configured: #{!!$conf[:soyoustart]}"
+  puts "Leaseweb accounts configured:  #{$conf[:leaseweb] && $conf[:leaseweb].keys.join(', ')}"
 end

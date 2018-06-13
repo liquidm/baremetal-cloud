@@ -1,6 +1,7 @@
 require 'yaml'
 require 'hetzner-api'
 require 'ovh/rest'
+require 'soyoustart/rest'
 require 'fileutils'
 require 'leaseweb-rest-api'
 require 'fileutils'
@@ -20,6 +21,7 @@ def baremetal_isps
     # TODO: generic bootstrap
     hetzner_init
     leaseweb_init
+    soyoustart_init
     ovh_init
   end
   @isps
