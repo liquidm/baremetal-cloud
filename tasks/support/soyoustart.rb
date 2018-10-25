@@ -43,7 +43,7 @@ def soyoustart_init
         puts "putting #{name} into rescue"
 
         soyoustart.put("/dedicated/server/#{name}", 'bootId' => 1122, 'monitoring' => false)
-        soyoustart.put("/dedicated/server/#{name}/serviceInfos", 'renew' => {'automatic' => true, 'forced' => false, 'period' => 1, 'deleteAtExpiration' => false})
+        #soyoustart.put("/dedicated/server/#{name}/serviceInfos", 'renew' => {'automatic' => true, 'forced' => false, 'period' => 1, 'deleteAtExpiration' => false})
         soyoustart.post("/dedicated/server/#{name}/reboot")
         wait_for_ssh(name)
         soyoustart.put("/dedicated/server/#{name}", 'bootId' => 1)
