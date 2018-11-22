@@ -46,6 +46,7 @@ def ovh_init
         ovh.put("/dedicated/server/#{name}/serviceInfos", 'renew' => {'automatic' => true, 'forced' => false, 'period' => 1, 'deleteAtExpiration' => false})
         ovh.post("/dedicated/server/#{name}/reboot")
         wait_for_ssh(name)
+        sleep 30 # ovh api broken, if you do this too fast, you don't get your ssh key
         ovh.put("/dedicated/server/#{name}", 'bootId' => 1)
       end
 
