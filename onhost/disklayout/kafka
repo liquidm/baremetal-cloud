@@ -1,0 +1,10 @@
+#!/bin/bash
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+. ${ONHOST}/disklayout/single-disk
+
+for disk in ${BOOT_DEVICES[@]:1}; do
+  part $disk 1 8300 0 $(echo $disk|cut -f 3 -d '/')
+  format $disk 1 ext4
+  mountfs $disk 1 ext4 /kafka/$(echo $disk|cut -f 3 -d '/')
+done
