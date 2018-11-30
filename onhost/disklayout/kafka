@@ -1,10 +1,14 @@
 #!/bin/bash
+
 ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/disklayout/boot
 
-. ${ONHOST}/disklayout/single-disk
+part ${BOOT_DEVICES[0]} 1 8300 256G
+format ${BOOT_DEVICES[0]} 1 ext4
+mountfs ${BOOT_DEVICES[0]} 1 ext4 /
 
-for disk in ${BOOT_DEVICES[@]:1}; do
-  part $disk 1 8300 0 $(echo $disk|cut -f 3 -d '/')
-  format $disk 1 ext4
-  mountfs $disk 1 ext4 /kafka/$(echo $disk|cut -f 3 -d '/')
+for disk in ${BOOT_DEVICES[@]}; do
+  part $disk 2 8300 0 $(echo $disk|cut -f 3 -d '/')
+  format $disk 2 ext4
+  mountfs $disk 2 ext4 /kafka/$(echo $disk|cut -f 3 -d '/')
 done
