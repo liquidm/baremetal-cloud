@@ -3,7 +3,7 @@ ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 . ${ONHOST}/disklayout/boot
 
-part ${BOOT_DEVICES[0]} 1 8300 2T root
+part ${BOOT_DEVICES[0]} 1 8300 256G root
 format ${BOOT_DEVICES[0]} 1 ext4
 mountfs ${BOOT_DEVICES[0]} 1 ext4 /
 
