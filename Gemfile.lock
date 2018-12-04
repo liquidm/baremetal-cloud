@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/liquidm/leaseweb-rest-api.git
-  revision: e49a6627ecbac393558800ab9c4eba115f64e47c
+  revision: f0239f35ae6f2f3e50e7900b3364161dd47bc90e
   branch: production
   specs:
     leaseweb-rest-api (1.1.6)
