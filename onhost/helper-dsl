@@ -278,10 +278,11 @@ E=O=F
   local device=$(ip route | awk '/default/ { print $5 }')
   local gateway=$(ip route list | grep default | awk '{ print $3 }')
   local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
+  local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
 
   cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
 [Match]
-Name=${device}
+MACAddress=${macaddress}
 
 [Network]
 Address=${ipaddress}
