@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/liquidm/hetzner-api.git
-  revision: 3b043d0ff4c1a9ad999cace6e94edb279dbeb49a
+  revision: 2c2dc03c0337ae1edcd2854ce677a988a49446b8
   specs:
     hetzner-api (1.2.0)
       httparty (~> 0.14.0)
