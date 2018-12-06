@@ -1,3 +1,3 @@
 #!/bin/sh
 
-apt-get install -y squashfs-tools gdisk bash mdadm
+apt-get install -y squashfs-tools gdisk bash mdadm iproute2
