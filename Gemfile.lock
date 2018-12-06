@@ -1,4 +1,14 @@
 GIT
+  remote: git://github.com/liquidm/hetzner-api.git
+  revision: 3b043d0ff4c1a9ad999cace6e94edb279dbeb49a
+  specs:
+    hetzner-api (1.2.0)
+      httparty (~> 0.14.0)
+      json
+      thor
+      xml-simple
+
+GIT
   remote: git://github.com/liquidm/leaseweb-rest-api.git
   revision: f0239f35ae6f2f3e50e7900b3364161dd47bc90e
   branch: production
@@ -145,11 +155,6 @@ GEM
     gpgme (2.0.16)
       mini_portile2 (~> 2.3)
     hashie (3.5.7)
-    hetzner-api (1.2.0)
-      httparty (~> 0.14.0)
-      json
-      thor
-      xml-simple
     highline (1.7.10)
     hitimes (1.2.6)
     http-cookie (1.0.3)
@@ -265,7 +270,7 @@ GEM
     term-ansicolor (1.6.0)
       tins (~> 1.0)
     text-table (1.2.4)
-    thor (0.20.0)
+    thor (0.20.3)
     thread_safe (0.3.6)
     timers (4.1.2)
       hitimes
@@ -296,7 +301,7 @@ DEPENDENCIES
   foodcritic
   gpgme
   grafana-api!
-  hetzner-api
+  hetzner-api!
   highline
   httparty
   knife-attribute
