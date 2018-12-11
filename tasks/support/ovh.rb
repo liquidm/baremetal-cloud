@@ -14,8 +14,13 @@ def ovh_init
             print "_"
             next
           end
-          metal = ovh.get("/dedicated/server/#{id}")
-          details = ovh.get("/dedicated/server/#{id}/specifications/hardware")
+		  begin
+		  	metal = ovh.get("/dedicated/server/#{id}")
+			details = ovh.get("/dedicated/server/#{id}/specifications/hardware")
+		  rescue
+		    print "*"
+			next
+		  end
           host = baremetal_by_id('ovh', metal['name'], state)
           host[:isp][:info] = "#{details['description']} #{details['diskGroups'].map{|d| d['description']}.join(';')}"
           host[:isp][:dc] = metal['datacenter']
