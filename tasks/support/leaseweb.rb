@@ -31,6 +31,11 @@ def leaseweb_init
             print 'e'
             retry
           end
+            
+          # remove brand from chassis name
+          if details['specs'].key? 'brand'
+              details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}\s+/i, '')
+          end
 
           host[:isp][:info] = "#{details['specs']['brand']} #{details['specs']['chassis']} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
           host[:isp][:dc] = info['location']['site']
