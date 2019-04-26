@@ -9,7 +9,8 @@ def ovh_init
         ovh_servers = ovh.get('/dedicated/server')
         puts "#{ovh_servers.length} servers at OVH"
         ovh_servers.each do |id|
-          status = ovh.get("/dedicated/server/#{id}/serviceInfos")['status']
+          service_infos = ovh.get("/dedicated/server/#{id}/serviceInfos")
+          status = service_infos['status']
           if status != 'ok'
             print "_"
             next
@@ -25,6 +26,7 @@ def ovh_init
           host[:isp][:info] = "#{details['description']} #{details['diskGroups'].map{|d| d['description']}.join(';')}"
           host[:isp][:dc] = metal['datacenter']
           host[:isp][:rack] = metal['rack']
+          host[:isp][:paid_until] = service_infos['expiration']
 
           host[:ipv4] = metal['ip']
 
