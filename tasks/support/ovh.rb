@@ -26,7 +26,7 @@ def ovh_init
           host[:isp][:info] = "#{details['description']} #{details['diskGroups'].map{|d| d['description']}.join(';')}"
           host[:isp][:dc] = metal['datacenter']
           host[:isp][:rack] = metal['rack']
-          host[:isp][:paid_until] = service_infos['expiration']
+          host[:isp][:contract_ends] = service_infos['expiration']
 
           host[:ipv4] = metal['ip']
 

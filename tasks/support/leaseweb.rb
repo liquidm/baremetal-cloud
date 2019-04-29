@@ -52,7 +52,7 @@ def leaseweb_init
               date = date >> contract_term
             end
 
-            host[:isp][:paid_until] = date.strftime('%Y-%m-%d')
+            host[:isp][:contract_ends] = date.strftime('%Y-%m-%d')
           end
 
           naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '')}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
