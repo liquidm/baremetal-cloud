@@ -165,3 +165,39 @@ def baremetal_rescue(hostparam)
     end
   end
 end
+
+def custom_install(hostparam, image, revision, disk_layout)
+  host = baremetal_by_human_input(hostparam)
+  ssh_opts = %Q{-i #{PRIVATE_SSH_KEY} -oBatchMode=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
+  revision = args.revision || "master"
+  disklayout = args.disklayout || "single-disk"
+
+  # todo check host and image variables are set correctly
+
+  # todo check if image_support_files file exists
+  image_support_files = File.expand_path("../baremetal-state/#{image}")
+
+  # copy image support files
+  # todo - check that this path works
+  script_path = File.expand_path("custom_script")
+
+  sh "scp #{ssh_opts} -r #{image_support_files} root@#{host[:ipv4]}:."
+
+  env_vars = {
+      custom_squash_fs_image_revision: revision,
+      custom_squash_fs_image_script: File.join('.', script_path, 'install.sh'),
+  }.map{|k, v| "export #{k.to_s.upcase}=#{v}"}
+
+  cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}")
+  File.open(cmd_file, 'w') do |f|
+    env_vars.each do |env|
+      f.puts env
+    end
+    f.puts ". onhost/disklayout/#{disklayout}"
+    f.puts ". onhost/install/ubuntu-bionic"
+    # f.puts "shutdown -r 1" # todo - reinclude this line
+  end
+
+  sh %Q{cat #{cmd_file}| ssh #{ssh_opts} #{host[:ipv4]} /bin/bash -l -s}
+
+end
