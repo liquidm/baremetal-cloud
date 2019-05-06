@@ -173,6 +173,8 @@ def custom_install(hostparam, image, revision, disk_layout)
   disklayout = args.disklayout || "single-disk"
 
   # todo check host and image variables are set correctly
+  throw "needs a host " unless host
+  throw "needs an image" unless image
 
   # todo check if image_support_files file exists
   image_support_files = File.expand_path("../baremetal-state/#{image}")
