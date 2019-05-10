@@ -51,7 +51,7 @@ end
 def baremetal_unique_id(pattern, host_info, state = baremetals)
   existing_host_id, existing_host = state.find do |id,h|
     begin
-      host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name] 
+      host_info[:isp][:id] == h[:isp][:id] && host_info[:isp][:name] == h[:isp][:name]
     rescue => e
       pp h
       pp host_info
@@ -173,17 +173,26 @@ def custom_install(hostparam, image, revision, disk_layout)
   disklayout = args.disklayout || "single-disk"
 
   # todo check host and image variables are set correctly
-  throw "needs a host " unless host
-  throw "needs an image" unless image
+  raise "needs a host " unless host
+  raise "needs an image" unless image
 
   # todo check if image_support_files file exists
-  image_support_files = File.expand_path("../baremetal-state/#{image}")
+  if(FILE.exist?("../baremetal-state/images/#{image}"))
+    image_support_files = File.expand_path("../baremetal-state/images/#{image}")
+  else
+    raise "image support files missing"
+  end
 
   # copy image support files
-  # todo - check that this path works
-  script_path = File.expand_path("custom_script")
-
   sh "scp #{ssh_opts} -r #{image_support_files} root@#{host[:ipv4]}:."
+
+ # todo - check that this path works
+  script_path = File.expand_path("/root/#{image}")
+  sh %{ssh #{ssh_opts} #{host[:ipv4]} /bin/test -e #{script_path}} do |ok, _|
+    unless ok
+      raise "script path not correct on destination machine"
+    end
+  end
 
   env_vars = {
       custom_squash_fs_image_revision: revision,
