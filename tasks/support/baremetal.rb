@@ -188,7 +188,7 @@ def custom_install(hostparam, image, revision, disk_layout)
 
  # todo - check that this path works
   script_path = File.expand_path("/root/#{image}")
-  sh %{ssh #{ssh_opts} #{host[:ipv4]} /bin/test -e #{script_path}} do |ok, _|
+  sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
     unless ok
       raise "script path not correct on destination machine"
     end
@@ -209,6 +209,6 @@ def custom_install(hostparam, image, revision, disk_layout)
     # f.puts "shutdown -r 1" # todo - reinclude this line
   end
 
-  sh %Q{cat #{cmd_file}| ssh #{ssh_opts} #{host[:ipv4]} /bin/bash -l -s}
+  sh %Q{cat #{cmd_file}| ssh #{ssh_opts} root@#{host[:ipv4]} /bin/bash -l -s}
 
 end
