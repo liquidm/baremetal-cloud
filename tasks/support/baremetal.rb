@@ -169,15 +169,15 @@ end
 def custom_install(hostparam, image, revision, disk_layout)
   host = baremetal_by_human_input(hostparam)
   ssh_opts = %Q{-i #{PRIVATE_SSH_KEY} -oBatchMode=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
-  revision = args.revision || "master"
-  disklayout = args.disklayout || "single-disk"
+  revision = revision || "master"
+  disklayout = disklayout || "single-disk"
 
   # todo check host and image variables are set correctly
   raise "needs a host " unless host
   raise "needs an image" unless image
 
   # todo check if image_support_files file exists
-  if(FILE.exist?("../baremetal-state/images/#{image}"))
+  if(File.exist?("../baremetal-state/images/#{image}"))
     image_support_files = File.expand_path("../baremetal-state/images/#{image}")
   else
     raise "image support files missing"
