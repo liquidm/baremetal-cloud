@@ -62,7 +62,10 @@ begin
 
     desc "bootstrap with custom image"
     task :custom_bootstrap, :hostparam, :image, :revision, :disk_layout do |t, args|
-      custom_install(args.hostparam, args.image, args.revision, args.disk_layout)
+#		puts "#{args.image}"
+#		puts "#{args.revision}"
+#		puts "#{args.disk_layout}"
+      custom_install(args[:hostparam], args[:image], "#{args[:revision]}", "#{args[:disk_layout]}")
     end
 
   end
