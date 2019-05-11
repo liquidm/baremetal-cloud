@@ -6,7 +6,7 @@ ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd ${BAREMETAL_ROOT}/boot
 SQUASH_FS_FILE="http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs"
 
-if [ ! -z "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
+if [[ -n "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]]; then
   source "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}"
 fi
 
