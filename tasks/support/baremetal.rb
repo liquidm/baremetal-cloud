@@ -185,10 +185,10 @@ def custom_install(hostparam, image, revision, disk_layout)
 
   # copy image support files
   sh "scp #{ssh_opts} -r #{image_support_files} root@#{host[:ipv4]}:"
-  # check if file have been copied
-  sh "ssh #{ssh_opts} root@#{host[:ipv4]}: [ -d #{image_support_files} ] && echo 'exists' || echo 'does not exist'"
+  # check if image dir has been copied
+  sh "ssh #{ssh_opts} root@#{host[:ipv4]} [ -d /root/#{image} ] && echo 'image dir exists' || echo 'image dir does not exist'"
 
- # todo - check that this path works
+  # todo - check that this path works
   script_path = File.expand_path("/root/#{image}")
   sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
     unless ok
