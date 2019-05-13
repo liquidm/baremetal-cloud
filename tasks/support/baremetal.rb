@@ -184,7 +184,9 @@ def custom_install(hostparam, image, revision, disk_layout)
   end
 
   # copy image support files
-  sh "scp #{ssh_opts} -r #{image_support_files} root@#{host[:ipv4]}:."
+  sh "scp #{ssh_opts} -r #{image_support_files} root@#{host[:ipv4]}:"
+  # check if file have been copied
+  sh "ssh #{ssh_opts} root@#{host[:ipv4]}: [ -d #{image_support_files} ] && echo 'exists' || echo 'does not exist'"
 
  # todo - check that this path works
   script_path = File.expand_path("/root/#{image}")
@@ -206,7 +208,7 @@ def custom_install(hostparam, image, revision, disk_layout)
     end
     f.puts ". onhost/disklayout/#{disklayout}"
     f.puts ". onhost/install/ubuntu-bionic"
-     f.puts "shutdown -r 1" # todo - reinclude this line
+    f.puts "shutdown -r 1" # todo - reinclude this line
   end
 
   sh %Q{cat #{cmd_file}| ssh #{ssh_opts} root@#{host[:ipv4]} /bin/bash -l -s}
