@@ -2,7 +2,6 @@ require 'yaml'
 require 'hetzner-api'
 require 'ovh/rest'
 require 'soyoustart/rest'
-require 'fileutils'
 require 'leaseweb-rest-api'
 require 'fileutils'
 
@@ -198,7 +197,7 @@ def custom_install(hostparam, image, revision, disk_layout)
 
   env_vars = {
       custom_squash_fs_image_revision: revision,
-      custom_squash_fs_image_script: File.join('.', script_path, 'install.sh'),
+      custom_squash_fs_image_script: File.join(script_path, 'install.sh'),
   }.map{|k, v| "export #{k.to_s.upcase}=#{v}"}
 
   cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}")
