@@ -8,7 +8,7 @@ SQUASH_FS_FILE="http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-serve
 
 if [ -n "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
 	echo "custom squashfs image script exists"
-  source "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}"
+	source "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}"
 fi
 
 wget "${SQUASH_FS_FILE}"
