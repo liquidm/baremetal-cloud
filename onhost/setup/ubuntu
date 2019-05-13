@@ -6,11 +6,13 @@ ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd ${BAREMETAL_ROOT}/boot
 SQUASH_FS_FILE="http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs"
 
-if [ ! -z "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
+if [ -n "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
+	echo "custom squashfs image script exists"
   source "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}"
 fi
 
 wget "${SQUASH_FS_FILE}"
+echo "unsquashing ${SQUASH_FS_FILE}"
 unsquashfs -f -d ${BAREMETAL_ROOT} $(basename "${SQUASH_FS_FILE}")
 
 # dns
