@@ -174,7 +174,7 @@ def custom_install(hostparam, image, revision, disk_layout)
   raise "needs a host " unless host
   raise "needs an image" unless image
 
-  if(File.exist?("../baremetal-state/images/#{image}"))
+  if (File.exist?("../baremetal-state/images/#{image}"))
     image_support_files = File.expand_path("../baremetal-state/images/#{image}")
   else
     raise "image support files missing"
@@ -185,11 +185,9 @@ def custom_install(hostparam, image, revision, disk_layout)
   # check if image dir has been copied
   sh "ssh #{ssh_opts} root@#{host[:ipv4]} [ -d /root/#{image} ] && echo 'image dir exists' || echo 'image dir does not exist'"
 
-  script_path = File.expand_path("/root/#{image}")
+  script_path = File.join('', 'root' image)
   sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
-    unless ok
-      raise "script path does not exist on destination machine"
-    end
+    raise "script path does not exist on destination machine" unless ok
   end
 
   env_vars = {
