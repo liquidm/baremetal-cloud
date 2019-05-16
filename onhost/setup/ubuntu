@@ -12,7 +12,6 @@ if [ -n "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
 fi
 
 wget "${SQUASH_FS_FILE}"
-echo "unsquashing ${SQUASH_FS_FILE}"
 unsquashfs -f -d ${BAREMETAL_ROOT} $(basename "${SQUASH_FS_FILE}")
 
 # dns
