@@ -191,7 +191,7 @@ def custom_install(hostparam, image, revision, disk_layout)
   script_path = File.expand_path("/root/#{image}")
   sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
     unless ok
-      raise "script path not correct on destination machine"
+      raise "script path does not exist on destination machine"
     end
   end
 
