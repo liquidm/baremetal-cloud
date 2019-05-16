@@ -171,11 +171,9 @@ def custom_install(hostparam, image, revision, disk_layout)
   revision = revision || "master"
   disklayout = disklayout || "single-disk"
 
-  # todo check host and image variables are set correctly
   raise "needs a host " unless host
   raise "needs an image" unless image
 
-  # todo check if image_support_files file exists
   if(File.exist?("../baremetal-state/images/#{image}"))
     image_support_files = File.expand_path("../baremetal-state/images/#{image}")
   else
@@ -187,7 +185,6 @@ def custom_install(hostparam, image, revision, disk_layout)
   # check if image dir has been copied
   sh "ssh #{ssh_opts} root@#{host[:ipv4]} [ -d /root/#{image} ] && echo 'image dir exists' || echo 'image dir does not exist'"
 
-  # todo - check that this path works
   script_path = File.expand_path("/root/#{image}")
   sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
     unless ok
@@ -207,7 +204,7 @@ def custom_install(hostparam, image, revision, disk_layout)
     end
     f.puts ". onhost/disklayout/#{disklayout}"
     f.puts ". onhost/install/ubuntu-bionic"
-    f.puts "shutdown -r 1" # todo - reinclude this line
+    f.puts "shutdown -r 1"
   end
 
   sh %Q{cat #{cmd_file}| ssh #{ssh_opts} root@#{host[:ipv4]} /bin/bash -l -s}
