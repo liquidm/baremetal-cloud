@@ -7,7 +7,6 @@ cd ${BAREMETAL_ROOT}/boot
 SQUASH_FS_FILE="http://cloud-images.ubuntu.com/${UBUNTU}/current/${UBUNTU}-server-cloudimg-${UBUNTU_ARCH}.squashfs"
 
 if [ -n "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}" ]; then
-	echo "using custom script ${CUSTOM_SQUASH_FS_SCRIPT}"
 	source "${CUSTOM_SQUASH_FS_IMAGE_SCRIPT}"
 fi
 
