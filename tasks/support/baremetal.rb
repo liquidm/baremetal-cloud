@@ -185,7 +185,7 @@ def custom_install(hostparam, image, revision, disk_layout)
   # check if image dir has been copied
   sh "ssh #{ssh_opts} root@#{host[:ipv4]} [ -d /root/#{image} ] && echo 'image dir exists' || echo 'image dir does not exist'"
 
-  script_path = File.join('', 'root' image)
+  script_path = File.join('', 'root' "#{image}")
   sh %{ssh #{ssh_opts} root@#{host[:ipv4]} `which test` -e #{script_path}} do |ok, _|
     raise "script path does not exist on destination machine" unless ok
   end
