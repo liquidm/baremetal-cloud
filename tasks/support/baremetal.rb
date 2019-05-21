@@ -165,7 +165,7 @@ def baremetal_rescue(hostparam)
   end
 end
 
-def custom_install(hostparam, image, revision, disk_layout)
+def custom_install(hostparam, image, revision, disklayout)
   host = baremetal_by_human_input(hostparam)
   ssh_opts = %Q{-i #{PRIVATE_SSH_KEY} -oBatchMode=yes -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oGlobalKnownHostsFile=/dev/null}
   revision = revision || "master"
