@@ -33,21 +33,21 @@ def leaseweb_init
             retry
           end
 
-        # remove brand from chassis name
-        if details['specs'].key? 'brand'
-          details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
-        end
+          # remove brand from chassis name
+          if details['specs'].key? 'brand'
+            details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
+          end
 
-		    host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
-        host[:isp][:dc] = info['location']['site']
-        host[:isp][:rack] = info['location']['rack']
-        host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
-        naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
+          host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
+          host[:isp][:dc] = info['location']['site']
+          host[:isp][:rack] = info['location']['rack']
+          host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
+          naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
           baremetal_id = baremetal_unique_id(naming_convention, host, state)
 
-		    # add this machine to old state to avoid some weird edge cases
-		    state[baremetal_id] = host
+          # add this machine to old state to avoid some weird edge cases
+          state[baremetal_id] = host
           target_state[baremetal_id] = host
         end
         puts ''
