@@ -11,7 +11,7 @@ gem 'knife-attribute'
 gem 'hetzner-api', github: 'liquidm/hetzner-api'
 gem 'ovh-rest', github: 'zenops/ovh-rest'
 gem 'soyoustart-rest', github: 'liquidm/soyoustart-rest', branch: 'soyoustart'
-gem 'leaseweb-rest-api', github: 'liquidm/leaseweb-rest-api', branch: 'production'
+gem 'leaseweb-rest-api', github: 'liquidm/leaseweb-rest-api', branch: 'add-cloud-support'
 gem 'grafana-api', github: 'liquidm/ruby-grafana-api'
 
 # Support libraries
