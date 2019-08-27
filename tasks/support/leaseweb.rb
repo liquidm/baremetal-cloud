@@ -52,6 +52,35 @@ def leaseweb_init
         end
         puts ''
 
+        # cloud
+        resp = account_api.getV2VirtualServers
+        if resp['errorMessage']
+          throw "#{account}: #{resp['errorMessage']}"
+        end
+
+        metals=resp['servers']
+        unless metals
+          puts "no cloud servers at leaseweb in #{account}?"
+          next
+        end
+        puts "#{metals.length} cloud servers at Leaseweb in #{account}"
+        metals.each do |info|
+          host = baremetal_by_id(account, info['id'], state)
+
+          hardware = info['hardware']
+          host[:isp][:info] = "#{hardware['cpu']['cores'].strip} core #{hardware['memory']['amount'].strip} #{hardware['memory']['unit'].strip} #{hardware['storage']['amount'].strip} #{hardware['storage']['unit'].strip} #{details['specs']['cpu']['type'].split(' ').last}"
+          host[:isp][:dc] = info['dataCenter']
+          info['ips'].each do |ip|
+            if ip['version'] && ip['type'] == 'PUBLIC' && !host[:ipv4]
+              host[:ipv4] = ip['ip']
+            end
+          end
+          naming_convention = "vs-#{infor['dataCenter'].gsub(/[^0-9]+/, '')}".downcase
+
+          baremetal_id = baremetal_unique_id(naming_convention, host, state)
+          target_state[baremetal_id] = host
+        end
+
         target_state
       end
 
