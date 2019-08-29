@@ -29,38 +29,38 @@ def leaseweb_init
           next
         end
 
-        if metals
-         puts "#{metals.length} servers at Leaseweb in #{account}"
-         metals.each do |info|
-           host = baremetal_by_id(account, info['id'], state)
+        #if metals
+        #  puts "#{metals.length} servers at Leaseweb in #{account}"
+        #  metals.each do |info|
+        #    host = baremetal_by_id(account, info['id'], state)
 
-           details = nil
-           begin
-             details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
-           rescue
-             print 'e'
-             retry
-           end
+        #    details = nil
+        #    begin
+        #      details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
+        #    rescue
+        #      print 'e'
+        #      retry
+        #    end
 
-           # remove brand from chassis name
-           if details['specs'].key? 'brand'
-             details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
-           end
+        #    # remove brand from chassis name
+        #    if details['specs'].key? 'brand'
+        #      details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
+        #    end
 
-           host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
-           host[:isp][:dc] = info['location']['site']
-           host[:isp][:rack] = info['location']['rack']
-           host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
-           naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
+        #    host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
+        #    host[:isp][:dc] = info['location']['site']
+        #    host[:isp][:rack] = info['location']['rack']
+        #    host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
+        #    naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
-           baremetal_id = baremetal_unique_id(naming_convention, host, state)
+        #    baremetal_id = baremetal_unique_id(naming_convention, host, state)
 
-           # add this machine to old state to avoid some weird edge cases
-           state[baremetal_id] = host
-           target_state[baremetal_id] = host
-         end
-          puts ''
-        end
+        #    # add this machine to old state to avoid some weird edge cases
+        #    state[baremetal_id] = host
+        #    target_state[baremetal_id] = host
+        #  end
+        #  puts ''
+        #end
 
         # process cloud
         unless cloud
@@ -68,11 +68,20 @@ def leaseweb_init
         else
           puts "#{cloud.length} cloud servers at Leaseweb in #{account}"
           cloud.each do |info|
+            credentials = nil
+            begin
+              credentials = account_api.getV2VirtualServerOsCredentialsForUser(info['id'], 'root') until credentials && !credentials['errorCode']
+            rescue
+              print 'e'
+              retry
+            end
+
             host = baremetal_by_id(account, info['id'], state)
 
             hardware = info['hardware']
             host[:isp][:info] = "#{hardware['cpu']['cores']} core #{hardware['memory']['amount']} #{hardware['memory']['unit'].strip} memory #{hardware['storage']['amount']} #{hardware['storage']['unit'].strip} storage"
             host[:isp][:dc] = info['dataCenter']
+            host[:isp][:pw] = credentials['password']
             info['ips'].each do |ip|
               if ip['version'] == 4 && ip['visibility'] == 'PUBLIC'
                 host[:ipv4] = ip['ip']
@@ -85,7 +94,6 @@ def leaseweb_init
           end
           puts ''
         end
-
 
         target_state
       end
