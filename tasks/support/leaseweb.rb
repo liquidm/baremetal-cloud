@@ -13,7 +13,7 @@ def leaseweb_init
         # check for cloud servers
         cloud_servers = account_api.getV2VirtualServers
         if cloud_servers['errorMessage']
-          throw "#{account}: #{resp['errorMessage']}"
+          throw "#{account}: #{cloud_servers['errorMessage']}"
         end
         cloud = cloud_servers['virtualServers']
 
