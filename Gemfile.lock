@@ -10,8 +10,8 @@ GIT
 
 GIT
   remote: git://github.com/liquidm/leaseweb-rest-api.git
-  revision: ac135a837efffeb1047827acaeb95d52eb4863a8
-  branch: add-cloud-to-lqm-prod
+  revision: a9b36ee0d89612c5db38cc2c06e1671f69dacacd
+  branch: production
   specs:
     leaseweb-rest-api (1.1.6)
       httparty
