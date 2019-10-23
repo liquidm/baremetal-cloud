@@ -99,13 +99,18 @@ def baremetal_by_id(isp, id, state = baremetals)
   }
 end
 
-def baremetal_scan_isps(state = baremetals)
-  puts "scannig isps, #{baremetals.size} in local state going in."
+def baremetal_scan_isps(provider, state = baremetals)
   target_state = {}
   known_ids = []
 
-  baremetal_isps.each do |isp_account, isp_api|
+  isps_to_scan = provider ? provider.split(":") : baremetal_isps.keys
+  puts "scannig isps(#{isps_to_scan.join(', ')}), #{baremetals.size} in local state going in."
+
+  isps_to_scan.each do |isp_account|
+    isp_api = baremetal_isps[isp_account]
+
     known_baremetals = isp_api.scan(state)
+
     known_baremetals.each do |baremetal_id, isp_host_info|
       target_state[baremetal_id] = (state.key?(baremetal_id) ? state[baremetal_id] : {}).merge(isp_host_info)
       target_state[baremetal_id][:id] = baremetal_id # helps to have it in the file
@@ -113,7 +118,16 @@ def baremetal_scan_isps(state = baremetals)
     end
   end
 
-  expired_hosts = state.keys - target_state.keys
+  expired_hosts = []
+
+  (state.keys - target_state.keys).each do |unknown_host|
+    unless isps_to_scan.include? state[unknown_host][:isp][:name]
+      target_state[unknown_host] = state[unknown_host] # we didn't scan this, so just copy
+    else
+      expired_hosts << unknown_host
+    end
+  end
+
   if expired_hosts.size > 0
     puts "There are #{expired_hosts.size} unknown nodes, removing them now"
     dirname="#{STATEDIR}/hosts"

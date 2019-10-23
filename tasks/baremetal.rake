@@ -4,9 +4,9 @@ begin
 
   namespace :baremetal do
 
-    desc "scan all ISPs for baremetals"
-    task :scan_isps do |t|
-      baremetals_persist(baremetal_scan_isps)
+    desc "scan all ISPs for baremetals. You can optional pass a subset of providers, use ':' as separator"
+    task :scan_isps, :provider do |t, args|
+      baremetals_persist(baremetal_scan_isps(args.provider))
     end
 
     desc "check configuration state of of baremetals"
