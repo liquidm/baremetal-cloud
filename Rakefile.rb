@@ -46,7 +46,7 @@ Dir[ File.join(File.dirname(__FILE__), 'tasks', '*.rake') ].sort.each do |f|
   load f
 end
 
-sh "tmux new-session -d -s 'baremetal' || true"
+sh "tmux new-session -d -s 'baremetal'  2>/dev/null|| true"
 
 task :default do
   puts "baremetal cloud"
@@ -62,5 +62,5 @@ task :default do
   puts "Hetzner account configured:    #{!!$conf[:hetzner]}"
   puts "OVH account configured:        #{!!$conf[:ovh]}"
   puts "Soyoustart account configured: #{!!$conf[:soyoustart]}"
-  puts "Leaseweb accounts configured:  #{$conf[:leaseweb] && $conf[:leaseweb].keys.join(', ')}"
+  puts "Leaseweb accounts configured:  #{($conf[:leaseweb] && $conf[:leaseweb].keys.join(', ')) || "none"}"
 end
