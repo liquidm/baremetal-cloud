@@ -7,4 +7,6 @@ gem 'soyoustart-rest', github: 'liquidm/soyoustart-rest', branch: 'soyoustart'
 gem 'leaseweb-rest-api', github: 'liquidm/leaseweb-rest-api', branch: 'production'
 
 # Support libraries
+gem 'chef', '15.4.45'
 gem 'rake'
+gem 'activesupport'
