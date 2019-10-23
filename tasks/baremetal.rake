@@ -40,7 +40,7 @@ begin
       host = baremetal_by_human_input(args.hostparam)
 
       require 'tmpdir'
-      cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}]")
+      cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}")
       File.open(cmd_file, 'w') do |f|
         f.puts ". onhost/disklayout/#{args.disklayout}"
         f.puts ". onhost/install/ubuntu-bionic"
