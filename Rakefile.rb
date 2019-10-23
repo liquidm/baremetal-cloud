@@ -2,7 +2,6 @@
 
 require 'rubygems'
 require 'pp'
-require 'chef'
 require 'json'
 require 'yaml'
 require 'active_support'
