@@ -2,7 +2,7 @@
 spawn_chroot() {
   local cmd=$1
 
-  echo -e '#!/bin/bash -l\n'${cmd}'\nexit $?' > ${BAREMETAL_ROOT}/tmp/spawn.sh
+  echo -e '#!/bin/bash -l\nexport PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin\n'${cmd}'\nexit $?' > ${BAREMETAL_ROOT}/tmp/spawn.sh
   chmod +x ${BAREMETAL_ROOT}/tmp/spawn.sh
   chroot ${BAREMETAL_ROOT} /tmp/spawn.sh
 }
