@@ -4,7 +4,7 @@ def leaseweb_init
     account_api.apiKeyAuth(config[:apikey])
     account_api.readPrivateKey(PRIVATE_SSH_KEY, false)
     account = "leaseweb.#{country}"
-    ssh_key = File.read("#{PRIVATE_SSH_KEY}.pub")
+    ssh_key = File.read("#{PRIVATE_SSH_KEY}.pub").strip
 
     baremetal_isps[account] = Class.new do
       define_singleton_method :scan do |state|
