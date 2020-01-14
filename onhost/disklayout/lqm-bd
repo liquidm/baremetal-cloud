@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/disklayout/boot
+
+part ${BOOT_DEVICES[0]} 1 8300
+format ${BOOT_DEVICES[0]} 1 ext4
+mountfs ${BOOT_DEVICES[0]} 1 ext4 /
+
+part ${NVMES[0]} 1 8300
+format ${NVMES[0]} 1 ext4
+mountfs ${NVMES[0]} 1 ext4 /var/app/postgresql
+
+part ${NVMES[1]} 1 8300
+format ${NVMES[1]} 1 ext4
+mountfs ${NVMES[1]} 1 ext4 /var/lib/postgresql
