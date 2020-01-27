@@ -102,7 +102,7 @@ def leaseweb_init
         host = baremetal_by_human_input(hostparam)
         id = host[:isp][:id]
         puts "putting #{id} into rescue"
-        task = account_api.postV2RescueMode(id, 'GRML', ssh_key)
+        task = account_api.postV2RescueMode(id, 'CENTOS_7', ssh_key)
         throw task['errorMessage'] if task['errorMessage']
 
         puts "waiting for #{host[:ipv4]} to reboot"
