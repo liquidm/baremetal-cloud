@@ -50,6 +50,8 @@ def leaseweb_init
            host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
            host[:isp][:dc] = info['location']['site']
            host[:isp][:rack] = info['location']['rack']
+           host[:isp][:costs] = details['contract']['pricePerFrequency']
+           host[:isp][:currency] = details['contract']['currency'] || 'USD'
            host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
            naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
