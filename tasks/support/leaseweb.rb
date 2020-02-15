@@ -6,7 +6,7 @@ def leaseweb_init
     account = "leaseweb.#{country}"
     ssh_key = File.read("#{PRIVATE_SSH_KEY}.pub").strip
 
-    baremetal_isps[account] = Class.new do
+    @isps[account] = Class.new do
       define_singleton_method :scan do |state|
         target_state = {}
 
