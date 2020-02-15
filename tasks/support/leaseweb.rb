@@ -37,18 +37,16 @@ def leaseweb_init
            details = nil
            begin
              details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
-           rescue
-             print 'e'
-             retry
+           rescue => e
+             print e
            end
 
            hardware_details = nil
 
            begin
              hardware_details = account_api.getV2DedicatedServerHardware(info['id']) until hardware_details && !hardware_details['errorCode']
-           rescue
-             print 'e'
-             retry
+           rescue => e
+             print e
            end
            #puts hardware_details
            # remove brand from chassis name
@@ -90,9 +88,8 @@ def leaseweb_init
             credentials = nil
             begin
               credentials = account_api.getV2VirtualServerOsCredentialsForUser(info['id'], 'root') until credentials && !credentials['errorCode']
-            rescue
-              print 'e'
-              retry
+            rescue => e
+              print e
             end
 
             host = baremetal_by_id(account, info['id'], state)
