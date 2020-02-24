@@ -6,7 +6,7 @@ def leaseweb_init
     account = "leaseweb.#{country}"
     ssh_key = File.read("#{PRIVATE_SSH_KEY}.pub").strip
 
-    baremetal_isps[account] = Class.new do
+    @isps[account] = Class.new do
       define_singleton_method :scan do |state|
         target_state = {}
 
@@ -37,11 +37,18 @@ def leaseweb_init
            details = nil
            begin
              details = account_api.getV2DedicatedServer(info['id']) until details && !details['errorCode']
-           rescue
-             print 'e'
-             retry
+           rescue => e
+             print e
            end
 
+           hardware_details = nil
+
+           begin
+             hardware_details = account_api.getV2DedicatedServerHardware(info['id']) until hardware_details && !hardware_details['errorCode']
+           rescue => e
+             print e
+           end
+           #puts hardware_details
            # remove brand from chassis name
            if details['specs'].key? 'brand'
              details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
@@ -50,6 +57,16 @@ def leaseweb_init
            host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
            host[:isp][:dc] = info['location']['site']
            host[:isp][:rack] = info['location']['rack']
+           host[:isp][:costs] = details['contract']['pricePerFrequency']
+           host[:isp][:currency] = details['contract']['currency'] || 'USD'
+           hardware_details['result']['network'].each_with_index.map { |interface, index| 
+              #puts interface['settings']['speed'].class
+              unless interface['settings']['speed'].nil? 
+                host[:isp]["network_#{index}".to_sym] = {}
+                host[:isp]["network_#{index}".to_sym][:mac] = interface['mac_address']
+                host[:isp]["network_#{index}".to_sym][:speed] = interface['settings']['speed']
+              end
+           }
            host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
            naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
 
@@ -71,9 +88,8 @@ def leaseweb_init
             credentials = nil
             begin
               credentials = account_api.getV2VirtualServerOsCredentialsForUser(info['id'], 'root') until credentials && !credentials['errorCode']
-            rescue
-              print 'e'
-              retry
+            rescue => e
+              print e
             end
 
             host = baremetal_by_id(account, info['id'], state)

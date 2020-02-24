@@ -2,7 +2,7 @@ def ovh_init
   if $conf[:ovh]
     ovh = OVH::REST.new($conf[:ovh][:app_key], $conf[:ovh][:app_secret], $conf[:ovh][:consumer_key])
 
-    baremetal_isps["ovh"] = Class.new do
+    @isps["ovh"] = Class.new do
       define_singleton_method :scan do |state|
         target_state = {}
 

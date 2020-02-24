@@ -4,7 +4,7 @@ def hetzner_init
 
     isp_id = 'hetzner'
 
-    baremetal_isps[isp_id] = Class.new do
+    @isps[isp_id] = Class.new do
       define_singleton_method :scan do |state|
         target_state = {}
 
