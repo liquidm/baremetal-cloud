@@ -280,7 +280,23 @@ E=O=F
   local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
   local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
 
-  cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
+  local braindeaddhcp=$(whois `curl -s ifconfig.me`|grep HETZNER)
+
+  if [ -n $braindeaddhcp ]
+  then
+    cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
+[Match]
+MACAddress=${macaddress}
+
+[Address]
+Address=$(curl -s ifconfig.me)/32
+Peer=${gateway}/32
+
+[Network]
+Gateway=${gateway}
+E=O=F
+  else
+    cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
 [Match]
 MACAddress=${macaddress}
 
@@ -288,5 +304,5 @@ MACAddress=${macaddress}
 Address=${ipaddress}
 Gateway=${gateway}
 E=O=F
-
+  fi
 }
