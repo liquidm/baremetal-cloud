@@ -282,7 +282,7 @@ E=O=F
 
   local braindeaddhcp=$(whois `curl -s ifconfig.me`|grep HETZNER)
 
-  if [ -n $braindeaddhcp ]
+  if [[ -n $braindeaddhcp ]]
   then
     cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
 [Match]
