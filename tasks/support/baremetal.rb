@@ -170,6 +170,7 @@ def baremetal_rescue(hostparam)
   loop do
     begin
       sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/onhost root@#{host[:ipv4]}:."
+      sh "scp -i #{PRIVATE_SSH_KEY} #{ssh_opts} -r #{ROOT}/../baremetal-state/hosts/#{host[:id]} root@#{host[:ipv4]}:/root/host_info"
       sh "ssh -i #{PRIVATE_SSH_KEY} #{ssh_opts} root@#{host[:ipv4]} onhost/setup/rescue-env"
       break
     rescue

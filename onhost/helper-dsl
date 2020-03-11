@@ -280,7 +280,7 @@ E=O=F
   local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
   local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
 
-  local braindeaddhcp=$(whois `curl -s ifconfig.me`|grep HETZNER)
+  local braindeaddhcp=$(cat /root/host_info|grep -i HETZNER)
 
   if [[ -n $braindeaddhcp ]]
   then
