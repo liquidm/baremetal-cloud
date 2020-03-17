@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/disklayout/boot
+
+part ${NVMES[0]} 5 8300 200G root
+part ${NVMES[0]} 1 fb01 322G aerospike1
+part ${NVMES[0]} 2 fb01 322G aerospike2
+part ${NVMES[0]} 3 fb01 322G aerospike3
+part ${NVMES[0]} 4 fb01 322G aerospike4
+
+format ${NVMES[0]} 5 ext4
+mountfs ${NVMES[0]} 5 ext4 /
+
+for disk in ${BOOT_DEVICES[@]}; do
+  part $disk 2 8300 0 $(echo $disk|cut -f 3 -d '/')
+  format $disk 2 ext4
+  mountfs $disk 2 ext4 /hadoop2/$(echo $disk|cut -f 3 -d '/')
+done
