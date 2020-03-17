@@ -22,6 +22,7 @@ def baremetal_isps
     leaseweb_init
     soyoustart_init
     ovh_init
+    serverscom_init
   end
   @isps
 end
