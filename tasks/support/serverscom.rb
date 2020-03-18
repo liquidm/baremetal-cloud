@@ -29,7 +29,7 @@ def serverscom_init
           host[:ipv4] = s['networks'].select{|net| net['pool_type']=="public"}.first['host_ip']
 
           # old naming convention
-          naming_convention =  "#{s['conf'].split[1].split("-")[0]}-scm-#{tokens[0].join()}-.#{tokens[0][0]}".downcase
+          naming_convention =  "#{s['conf'].split[1].split("-")[0].first(5)}-scm-#{tokens[0].join()}-#{s['location']['id']}-.#{tokens[0][0]}".downcase
 
           # new naming convention
           # <max 5 chars for chassis type>-<rack-id>-<isp-id>.<dc>-<max 3  chars for isp>.lqm.io
