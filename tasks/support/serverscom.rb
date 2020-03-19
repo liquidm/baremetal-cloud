@@ -62,14 +62,6 @@ def serverscom_init
           http.request(req)
         }
 
-		puts res.body
-		puts res
-
-        #h.disable_rescue!(ip)
-        ## todo: it's just a hack, need to fork hetzner-api and clean it up
-        #rescue_state = h.enable_rescue!(ip, 'linux', 64, fingerprint)
-        #throw rescue_state if rescue_state['error']
-        #h.reset!(ip, :hw)
         wait_for_ssh(ip)
       end
     end
