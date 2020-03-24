@@ -281,6 +281,7 @@ E=O=F
   local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
 
   local braindeaddhcp=$(cat /root/host_info|grep -i HETZNER)
+  local serverscomhcp=$(cat /root/host_info|grep -i SERVERSCOM)
 
   if [[ -n $braindeaddhcp ]]
   then
@@ -295,6 +296,9 @@ Peer=${gateway}/32
 [Network]
 Gateway=${gateway}
 E=O=F
+  elif [[ -n $serverscomhcp ]]
+  then
+    cp -vf /etc/netplan/* ${BAREMETAL_ROOT}/etc/netplan/
   else
     cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
 [Match]
