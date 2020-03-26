@@ -94,8 +94,8 @@ def serverscom_init
         scm_legacy_api_get_net_image(id, "/tmp/scm-net-#{id}.iso")
 
         puts "Building cd with network support"
-        # prepare iso for boot
-        puts %x{cd ../livecd;./build.sh #{id}}
+        # prepare and build iso for boot
+        puts %x{cd ../livecd;./prepare.sh;./build.sh #{id}}
 
         # sequence to boot from iso
         # dev box as image hosting
