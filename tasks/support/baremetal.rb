@@ -217,7 +217,7 @@ def custom_install(hostparam, image, revision, disklayout)
       f.puts env
     end
     f.puts ". onhost/disklayout/#{disklayout}"
-    f.puts ". onhost/install/ubuntu-bionic"
+    f.puts ". onhost/install/ubuntu-focal"
     f.puts "shutdown -r 1"
   end
 

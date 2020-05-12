@@ -43,7 +43,7 @@ begin
       cmd_file = File.join(Dir.tmpdir(), "baremetal-#{host[:ipv4]}")
       File.open(cmd_file, 'w') do |f|
         f.puts ". onhost/disklayout/#{args.disklayout}"
-        f.puts ". onhost/install/ubuntu-bionic"
+        f.puts ". onhost/install/ubuntu-focal"
         f.puts "reboot"
       end
 

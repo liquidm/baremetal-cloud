@@ -1,0 +1,20 @@
+#!/bin/bash
+
+UBUNTU="focal"
+UBUNTU_ARCH="amd64"
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/config
+baremetal_config
+
+alternate_wipe
+alternate_partition
+alternate_md
+alternate_format
+alternate_mount_baremetal
+
+. ${ONHOST}/setup/ubuntu
+. ${ONHOST}/setup/ubuntu-kernel
+
+alternate_fstab
+alternate_bless
