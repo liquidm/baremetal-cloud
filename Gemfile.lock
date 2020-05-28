@@ -32,27 +32,27 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.0)
+    activesupport (6.0.3.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-      zeitwerk (~> 2.1, >= 2.1.8)
-    concurrent-ruby (1.1.5)
+      zeitwerk (~> 2.2, >= 2.2.2)
+    concurrent-ruby (1.1.6)
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
-    i18n (1.7.0)
+    i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    json (2.2.0)
-    minitest (5.12.2)
+    json (2.3.0)
+    minitest (5.14.1)
     multi_xml (0.6.0)
-    rake (13.0.0)
+    rake (13.0.1)
     thor (0.20.3)
     thread_safe (0.3.6)
-    tzinfo (1.2.5)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     xml-simple (1.1.5)
-    zeitwerk (2.2.0)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby
@@ -66,4 +66,4 @@ DEPENDENCIES
   soyoustart-rest!
 
 BUNDLED WITH
-   2.0.2
+   2.1.4
