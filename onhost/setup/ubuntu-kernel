@@ -1,7 +1,14 @@
 #!/bin/bash
 
-ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
-. ${ONHOST}/config
+# install boot loaders
+spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64"
 
-# install default kernel
-spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install linux-generic extlinux grub-efi-amd64"
+# fetch and install kernel via ubuntu ppa
+mkdir -p /root/kernel-5.6.15
+cd /root/kernel-5.6.15
+
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.6.15/linux-headers-5.6.15-050615_5.6.15-050615.202005271638_all.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.6.15/linux-headers-5.6.15-050615-generic_5.6.15-050615.202005271638_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.6.15/linux-image-unsigned-5.6.15-050615-generic_5.6.15-050615.202005271638_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.6.15/linux-modules-5.6.15-050615-generic_5.6.15-050615.202005271638_amd64.deb
+dpkg -i *.deb
