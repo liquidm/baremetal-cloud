@@ -79,11 +79,11 @@ begin
 spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64"
 
 # fetch and install kernel via ubuntu ppa
-spawn_chroot "mkdir -p /mnt/baremetal<%= kernel_dir %>"
+mkdir -p /mnt/baremetal<%= kernel_dir %>
 cd /mnt/baremetal<%= kernel_dir %>
 <% debs.each do |kernel_deb| %>
 wget <%= (uri + kernel_deb) %><% end %>
-spawn_chroot "dpkg -i <%= kernel_dir %>/*.deb
+spawn_chroot "dpkg -i <%= kernel_dir %>/*.deb"
 }
 
       File.open('./onhost/setup/ubuntu-kernel', 'w') do |f|
