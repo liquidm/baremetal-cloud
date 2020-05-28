@@ -65,6 +65,32 @@ begin
       custom_install(args[:hostparam], args[:image], args[:revision], args[:disk_layout])
     end
 
+    desc "select ubuntu kernel to be installed during bootstrap"
+    task :select_ubuntu_kernel, :kernel_version do |t, args|
+      uri = URI("https://kernel.ubuntu.com/~kernel-ppa/mainline/v#{args.kernel_version}/")
+      debs = Net::HTTP.get(uri).scan(/href=('|")(linux.+(?:all|amd64)\.deb)('|")/).map{|m| m[1]}.select{|deb| !deb.match(/lowlatency/)}.uniq
+
+      raise "No debs foud for #{args.kernel_version}" if debs.length == 0
+
+      kernel_dir = "/root/kernel-#{args.kernel_version}"
+      kernel_installer = ERB.new %Q{#!/bin/bash
+
+# install boot loaders
+spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64"
+
+# fetch and install kernel via ubuntu ppa
+mkdir -p <%= kernel_dir %>
+cd <%= kernel_dir %>
+<% debs.each do |kernel_deb| %>
+wget <%= (uri + kernel_deb) %><% end %>
+dpkg -i *.deb
+}
+
+      File.open('./onhost/setup/ubuntu-kernel', 'w') do |f|
+        f.write kernel_installer.result(binding)
+      end
+
+    end
   end
 rescue LoadError
   $stderr.puts "Baremetal API cannot be loaded. Skipping some rake tasks ..."
