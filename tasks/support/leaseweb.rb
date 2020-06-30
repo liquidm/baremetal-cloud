@@ -59,9 +59,9 @@ def leaseweb_init
            host[:isp][:rack] = info['location']['rack']
            host[:isp][:costs] = details['contract']['pricePerFrequency']
            host[:isp][:currency] = details['contract']['currency'] || 'USD'
-           hardware_details['result']['network'].each_with_index.map { |interface, index| 
+           hardware_details['result']['network'].each_with_index.map { |interface, index|
               #puts interface['settings']['speed'].class
-              unless interface['settings']['speed'].nil? 
+              unless interface['settings']['speed'].nil?
                 host[:isp]["network_#{index}".to_sym] = {}
                 host[:isp]["network_#{index}".to_sym][:mac] = interface['mac_address']
                 host[:isp]["network_#{index}".to_sym][:speed] = interface['settings']['speed']
