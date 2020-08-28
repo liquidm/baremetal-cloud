@@ -175,8 +175,8 @@ def baremetal_rescue(hostparam)
       sh "ssh -i #{PRIVATE_SSH_KEY} #{ssh_opts} root@#{host[:ipv4]} onhost/setup/rescue-env"
       break
     rescue
-      puts "Looks like ssh isn't really up yet... retrying in 5"
-      sleep 5
+      puts "Looks like ssh isn't really up yet... retrying in 30"
+      sleep 30
     end
   end
 end
