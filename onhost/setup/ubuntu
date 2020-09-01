@@ -15,16 +15,16 @@ unsquashfs -f -d ${BAREMETAL_ROOT} $(basename "${SQUASH_FS_FILE}")
 
 # dns
 rm -f ${BAREMETAL_ROOT}/etc/resolv.conf
-cp /etc/resolv.conf ${BAREMETAL_ROOT}/etc/resolv.conf
+cp -f /etc/resolv.conf ${BAREMETAL_ROOT}/etc/resolv.conf
 
 # ssh
 mkdir ${BAREMETAL_ROOT}/root/.ssh
 chmod 700 ${BAREMETAL_ROOT}/root/.ssh/
-cp /root/.ssh/authorized* ${BAREMETAL_ROOT}/root/.ssh
+cp -f /root/.ssh/authorized* ${BAREMETAL_ROOT}/root/.ssh
 spawn_chroot "ssh-keygen -A"
 
 # timezone
-cp ${BAREMETAL_ROOT}/usr/share/zoneinfo/UTC ${BAREMETAL_ROOT}/etc/localtime
+cp -f ${BAREMETAL_ROOT}/usr/share/zoneinfo/UTC ${BAREMETAL_ROOT}/etc/localtime
 echo "UTC" > ${BAREMETAL_ROOT}/etc/timezone
 
 # make apt operational and remove unnecessary packages
