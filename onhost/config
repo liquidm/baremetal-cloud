@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KERNEL_OPTIONS="console=tty1 net.ifnames=0 biosdevname=0 nvme_core.apst_override=1 nvme_core.default_ps_max_latency_us=5500 pti=off" # WARNING: pti=on unless you know what it means
+KERNEL_OPTIONS="console=tty1 net.ifnames=0 biosdevname=0 nvme_core.apst_override=1 nvme_core.default_ps_max_latency_us=200 pti=off" # WARNING: pti=on unless you know what it means
 BAREMETAL_ROOT="/mnt/baremetal"
 
 ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
