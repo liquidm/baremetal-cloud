@@ -67,7 +67,7 @@ begin
 
     desc "select ubuntu kernel to be installed during bootstrap"
     task :select_ubuntu_kernel, :kernel_version do |t, args|
-      uri = URI("https://kernel.ubuntu.com/~kernel-ppa/mainline/v#{args.kernel_version}/")
+      uri = URI("https://kernel.ubuntu.com/~kernel-ppa/mainline/v#{args.kernel_version}/amd64/")
       debs = Net::HTTP.get(uri).scan(/href=('|")(linux.+(?:all|amd64)\.deb)('|")/).map{|m| m[1]}.select{|deb| !deb.match(/lowlatency/)}.uniq
 
       raise "No debs foud for #{args.kernel_version}" if debs.length == 0
