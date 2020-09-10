@@ -59,16 +59,28 @@ def leaseweb_init
            host[:isp][:rack] = info['location']['rack']
            host[:isp][:costs] = details['contract']['pricePerFrequency']
            host[:isp][:currency] = details['contract']['currency'] || 'USD'
-           hardware_details['result']['network'].each_with_index.map { |interface, index| 
+           hardware_details['result']['network'].each_with_index.map { |interface, index|
               #puts interface['settings']['speed'].class
-              unless interface['settings']['speed'].nil? 
+              unless interface['settings']['speed'].nil?
                 host[:isp]["network_#{index}".to_sym] = {}
                 host[:isp]["network_#{index}".to_sym][:mac] = interface['mac_address']
                 host[:isp]["network_#{index}".to_sym][:speed] = interface['settings']['speed']
               end
            }
+
            host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
-           naming_convention = "#{details['specs']['chassis'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['rack'].gsub(/[^A-Za-z0-9]+/, '')}-#{info['location']['site'].gsub(/[^0-9]+/, '')}-#{info['contract']['internalReference'].gsub(/[^A-Za-z0-9]+/, '') rescue "nr"}.#{info['location']['site'].gsub(/[^A-Za-z]+/, '')}".downcase
+           naming_convention = [
+             details['specs']['cpu']['type'][0],
+             details['specs']['ram']['size'],
+             '-',
+             info['location']['rack'].gsub(/[^A-Za-z0-9]+/, ''),
+             '-',
+             info['location']['site'].gsub(/[^0-9]+/, ''),
+             '-',
+             info['id'],
+             '-nr.',
+             info['location']['site'].gsub(/[^A-Za-z]+/, '')
+           ].join('').downcase
 
            baremetal_id = baremetal_unique_id(naming_convention, host, state)
 
