@@ -66,7 +66,7 @@ def leaseweb_init
                 host[:isp]["network_#{index}".to_sym][:mac] = interface['mac_address']
                 host[:isp]["network_#{index}".to_sym][:speed] = interface['settings']['speed']
               end
-           }
+           } if hardware_details['result'] && hardware_details['result']['network']
 
            host[:ipv4] = info['networkInterfaces']['public']['ip'].split('/').first rescue nil
            naming_convention = [
