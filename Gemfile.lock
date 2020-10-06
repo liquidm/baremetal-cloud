@@ -17,17 +17,17 @@ GIT
       httparty
 
 GIT
+  remote: https://github.com/liquidm/ovh-rest.git
+  revision: e2ee61014a3a5bfebec5fed72cd2752f5bb75f0a
+  specs:
+    ovh-rest (0.0.2)
+
+GIT
   remote: https://github.com/liquidm/soyoustart-rest.git
   revision: 62d0f6ca9e72f37cfde680c9ecb688254c6a1c78
   branch: soyoustart
   specs:
     soyoustart-rest (0.0.2)
-
-GIT
-  remote: https://github.com/zenops/ovh-rest.git
-  revision: e2ee61014a3a5bfebec5fed72cd2752f5bb75f0a
-  specs:
-    ovh-rest (0.0.2)
 
 GEM
   remote: https://rubygems.org/
