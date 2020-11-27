@@ -4,10 +4,11 @@
 spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64"
 
 # fetch and install kernel via ubuntu ppa
-mkdir -p /mnt/baremetal/root/kernel-4.9.236
-cd /mnt/baremetal/root/kernel-4.9.236
+mkdir -p /mnt/baremetal/root/kernel-4.9.209
+cd /mnt/baremetal/root/kernel-4.9.209
 
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.9.236/amd64/linux-headers-4.9.236-0409236-generic_4.9.236-0409236.202009120810_amd64.deb
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.9.236/amd64/linux-headers-4.9.236-0409236_4.9.236-0409236.202009120810_all.deb
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.9.236/amd64/linux-image-4.9.236-0409236-generic_4.9.236-0409236.202009120810_amd64.deb
-spawn_chroot "dpkg -i /root/kernel-4.9.236/*.deb"
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.209/amd64/linux-headers-4.14.209-0414209-generic_4.14.209-0414209.202011241446_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.209/amd64/linux-headers-4.14.209-0414209_4.14.209-0414209.202011241446_all.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.209/amd64/linux-modules-4.14.209-0414209-generic_4.14.209-0414209.202011241446_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.209/amd64/linux-image-unsigned-4.14.209-0414209-generic_4.14.209-0414209.202011241446_amd64.deb
+spawn_chroot "dpkg -i /root/kernel-4.9.209/*.deb"
