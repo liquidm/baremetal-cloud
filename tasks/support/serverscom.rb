@@ -67,7 +67,7 @@ def serverscom_init
             "scm",
             "-",
             s['id'],
-            "-nr.",
+            "-.",
             tokens[0][0]
           ].join('').downcase
 
