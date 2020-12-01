@@ -55,13 +55,21 @@ def serverscom_init
           host[:isp][:info] = s['conf']
           host[:isp][:dc], host[:isp][:rack] = tokens[0].join(), s['location']['id']
           host[:ipv4] = s['networks'].select{|net| net['pool_type']=="public"}.first['host_ip']
+          server = scm_legacy_api("GET", "https://portal.servers.com/rest/hosts/#{s['id']}")
+          sleep 1
 
-          # old naming convention
-          naming_convention =  "#{s['conf'].split[1].split("-")[0].first(5)}-#{s['location']['id']}-#{tokens[0].join()}-scm-.#{tokens[0][0]}".downcase
-
-          # new naming convention
-          # <max 5 chars for chassis type>-<rack-id>-<isp-id>.<dc>-<max 3  chars for isp>.lqm.io
-          #naming_convention = "#{s['conf'].split[1].split("-")[0].first(5)}-#{s['location']['id']}-.#{tokens[0].join()}-scm".downcase
+          naming_convention = [
+            server["server"]["chassis_model_cpu_name"].downcase.include?("amd") ? "a" : "i",
+            server["server"]["ram_in_server"].inject(0){|sum,x| sum + x["ram_model_size"]},
+            "-",
+            server["rack_id"],
+            "-",
+            "scm",
+            "-",
+            s['id'],
+            "-nr.",
+            tokens[0][0]
+          ].join('').downcase
 
           target_state[baremetal_unique_id(naming_convention, host, target_state.merge(state))] = host
         end
