@@ -3,11 +3,11 @@
 ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . ${ONHOST}/disklayout/boot
 
-part ${NVMES[0]} 1 8300
-format ${NVMES[0]} 1 ext4
-mountfs ${NVMES[0]} 1 ext4 /
+part ${NVMES[1]} 1 8300
+format ${NVMES[1]} 1 ext4
+mountfs ${NVMES[1]} 1 ext4 /
 
-part ${NVMES[1]} 1 fb01 370G aerospike1
-part ${NVMES[1]} 2 fb01 370G aerospike2
-part ${NVMES[1]} 3 fb01 370G aerospike3
-part ${NVMES[1]} 4 fb01 370G aerospike4
+part ${NVMES[0]} 1 fb01 370G aerospike1
+part ${NVMES[0]} 2 fb01 370G aerospike2
+part ${NVMES[0]} 3 fb01 370G aerospike3
+part ${NVMES[0]} 4 fb01 370G aerospike4
