@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install boot loaders
-spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64"
+spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64 linux-firmware"
 
 # fetch and install kernel via ubuntu ppa
 mkdir -p /mnt/baremetal/root/kernel-4.14.215
