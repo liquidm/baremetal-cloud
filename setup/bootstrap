@@ -10,3 +10,5 @@ rvm install `cat .ruby-version`
 cd $ROOT_DIR
 gem install bundler
 bundle install
+rake configure
+rake
