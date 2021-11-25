@@ -62,8 +62,6 @@ def serverscom_init
             server["server"]["chassis_model_cpu_name"].downcase.include?("amd") ? "a" : "i",
             server["server"]["ram_in_server"].inject(0){|sum,x| sum + x["ram_model_size"]},
             "-",
-            server["rack_id"],
-            "-",
             "scm",
             "-",
             s['id'],
