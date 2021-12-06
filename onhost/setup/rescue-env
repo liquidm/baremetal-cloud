@@ -1,4 +1,5 @@
 #!/bin/sh
 
+apt-get update -y
 apt-get install -y squashfs-tools gdisk bash mdadm iproute2 || yum install -y squashfs-tools gdisk bash mdadm iproute2
 iptables -F || echo "no iptables available" # flush out everything including connection counts
