@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ONHOST="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+. ${ONHOST}/disklayout/boot
+
+part ${BOOT_DEVICES[0]} 1 8300
+format ${BOOT_DEVICES[0]} 1 ext4
+mountfs ${BOOT_DEVICES[0]} 1 ext4 /
+
+part ${NVMES[0]} 1 fb01 1400G aerospike1
+part ${NVMES[0]} 2 fb01 1400G aerospike2
+part ${NVMES[0]} 3 fb01 1400G aerospike3
+part ${NVMES[0]} 4 fb01 1400G aerospike4
