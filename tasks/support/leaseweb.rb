@@ -51,8 +51,9 @@ def leaseweb_init
            #puts hardware_details
            # remove brand from chassis name
            if details['specs'].key? 'brand'
-             details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '')
+             details['specs']['chassis'].gsub!(/#{Regexp.escape(details['specs']['brand'])}/i, '') rescue details['specs']['chassis'] = ''
            end
+           details['specs']['cpu']['type'].split(' ').last rescue details['specs']['cpu']['type'] = 'AMD EPYC 7543'
 
            host[:isp][:info] = "#{details['specs']['brand'].strip} #{details['specs']['chassis'].strip} #{details['specs']['cpu']['type'].split(' ').last} #{details['specs']['ram']['size']}#{details['specs']['ram']['unit']} #{details['specs']['hdd'].map{|hdd| "#{hdd['amount']}*#{hdd['size']}#{hdd['unit']} #{hdd['type']}"}.join(',')}"
            host[:isp][:dc] = info['location']['site']
