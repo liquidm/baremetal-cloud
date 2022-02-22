@@ -59,6 +59,9 @@ def leaseweb_init
            host[:isp][:dc] = info['location']['site']
            host[:isp][:rack] = info['location']['rack']
            host[:isp][:costs] = details['contract']['pricePerFrequency']
+           host[:isp][:contractTerm] = details['contract']['contractTerm']
+           host[:isp][:contractStartsAt] = details['contract']['startsAt']
+           host[:isp][:contractEndAt] = details['contract']['endsAt']
            host[:isp][:currency] = details['contract']['currency'] || 'USD'
            hardware_details['result']['network'].each_with_index.map { |interface, index|
               #puts interface['settings']['speed'].class
