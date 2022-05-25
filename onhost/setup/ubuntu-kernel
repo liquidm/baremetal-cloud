@@ -4,12 +4,12 @@
 spawn_chroot "DEBIAN_FRONTEND=noninteractive apt-get -y install extlinux grub-efi-amd64 linux-firmware"
 
 # fetch and install kernel via ubuntu ppa
-mkdir -p /mnt/baremetal/root/kernel-4.14.215
-cd /mnt/baremetal/root/kernel-4.14.215
+mkdir -p /mnt/baremetal/root/kernel-5.4.192
+cd /mnt/baremetal/root/kernel-5.4.192
 
 
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.215/amd64/linux-headers-4.14.215-0414215-generic_4.14.215-0414215.202101122110_amd64.deb
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.215/amd64/linux-headers-4.14.215-0414215_4.14.215-0414215.202101122110_all.deb
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.215/amd64/linux-modules-4.14.215-0414215-generic_4.14.215-0414215.202101122110_amd64.deb
-wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14.215/amd64/linux-image-unsigned-4.14.215-0414215-generic_4.14.215-0414215.202101122110_amd64.deb
-spawn_chroot "dpkg -i /root/kernel-4.14.215/*.deb"
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.192/amd64/linux-headers-5.4.192-0504192-generic_5.4.192-0504192.202205090844_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.192/amd64/linux-headers-5.4.192-0504192_5.4.192-0504192.202205090844_all.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.192/amd64/linux-image-unsigned-5.4.192-0504192-generic_5.4.192-0504192.202205090844_amd64.deb
+wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.192/amd64/linux-modules-5.4.192-0504192-generic_5.4.192-0504192.202205090844_amd64.deb
+spawn_chroot "dpkg -i /root/kernel-5.4.192/*.deb"
