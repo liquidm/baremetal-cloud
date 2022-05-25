@@ -322,17 +322,17 @@ network:
     ethernets:
       agge:
         match:
-          macaddress: ${macaddress}
+          macaddress: "${macaddress}"
         addresses:
-        - ${ipaddress}
+        - "${ipaddress}"
         routes:
-        - to: default
-          via: ${gateway}
+        - to: "0.0.0.0/0"
+          via: "${gateway}"
       aggi:
         match:
-          macaddress: ${macaddress_private}
+          macaddress: "${macaddress_private}"
         addresses:
-        - ${ipaddress_private}
+        - "${ipaddress_private}"
 E=O=F
   fi
 }
