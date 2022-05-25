@@ -320,19 +320,19 @@ network:
   version: 2
   renderer: networkd
     ethernets:
-	  agge:
-	    match:
-		  macaddress: ${macaddress}
-	    addresses:
-		- ${ipaddress}
-		routes:
-		- to: default
-		  via: ${gateway}
-	  aggi:
-	    match:
-		  macaddress: ${macaddress_private}
-	    addresses:
-		- ${ipaddress_private}
+      agge:
+        match:
+          macaddress: ${macaddress}
+        addresses:
+        - ${ipaddress}
+        routes:
+        - to: default
+          via: ${gateway}
+      aggi:
+        match:
+          macaddress: ${macaddress_private}
+        addresses:
+        - ${ipaddress_private}
 E=O=F
   fi
 }
