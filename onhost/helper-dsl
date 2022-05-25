@@ -25,9 +25,18 @@ alternate_wipe() {
     umount ${BAREMETAL_ROOT}$special 2>/dev/null
   done
 
+  # get list md parts before md stop
+  md_disks=$(grep 'md' /proc/mdstat | tr ' ' '\n' | sed -n 's/\[.*//p')
+
   for m in /dev/md?*; do
     umount -l $m
     mdadm --stop $m
+  done
+
+  # zero actual md superblocks
+  for disk in $md_disks; do
+    mdadm --zero-superblock /dev/${disk}
+    echo "md drive /dev/${disk} zeroed"
   done
 
   for disk in ${localdisks[@]}; do
