@@ -276,9 +276,14 @@ E=O=F
 
   # default network config
   local device=$(ip route | awk '/default/ { print $5 }')
+  local device_private=$(ip link|grep "state UP"|grep -v ${device}|head -1|tr -d ':'|cut -f2 -d" ")
+
   local gateway=$(ip route list | grep default | awk '{ print $3 }')
   local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
   local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
+
+  local ipaddress_private=$(ip addr show dev ${device_private} | grep 'inet .*global' | awk '{ print $2 }')
+  local macaddress_private=$(ip link show ${device_private} | awk '/ether/ {print $2}')
 
   local braindeaddhcp=$(cat /root/host_info|grep -i HETZNER)
   local serverscomhcp=$(cat /root/host_info|grep -i SERVERSCOM)
@@ -300,13 +305,25 @@ E=O=F
   then
     cp -vf /etc/netplan/* ${BAREMETAL_ROOT}/etc/netplan/
   else
-    cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
-[Match]
-MACAddress=${macaddress}
-
-[Network]
-Address=${ipaddress}
-Gateway=${gateway}
+    cat <<E=O=F >${BAREMETAL_ROOT}/etc/netplan/01-netcfg.yaml
+---
+network:
+  version: 2
+  renderer: networkd
+    ethernets:
+	  agge:
+	    match:
+		  macaddress: ${macaddress}
+	    addresses:
+		- ${ipaddress}
+		routes:
+		- to: default
+		  via: ${gateway}
+	  aggi:
+	    match:
+		  macaddress: ${macaddress_private}
+	    addresses:
+		- ${ipaddress_private}
 E=O=F
   fi
 }
