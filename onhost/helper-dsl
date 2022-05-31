@@ -290,6 +290,7 @@ E=O=F
   local gateway=$(ip route list | grep default | awk '{ print $3 }')
   local ipaddress=$(ip addr show dev ${device} | grep 'inet .*global' | awk '{ print $2 }')
   local macaddress=$(ip link show ${device} | awk '/ether/ {print $2}')
+  local ipaddress_hetzner=$(curl -s ifconfig.me)
 
   local ipaddress_private=$(ip addr show dev ${device_private} | grep 'inet .*global' | awk '{ print $2 }')
   local macaddress_private=$(ip link show ${device_private} | awk '/ether/ {print $2}')
@@ -299,16 +300,25 @@ E=O=F
 
   if [[ -n $braindeaddhcp ]]
   then
-    cat <<E=O=F >${BAREMETAL_ROOT}/etc/systemd/network/default.network
-[Match]
-MACAddress=${macaddress}
-
-[Address]
-Address=$(curl -s ifconfig.me)/32
-Peer=${gateway}/32
-
-[Network]
-Gateway=${gateway}
+    cat <<E=O=F >${BAREMETAL_ROOT}/etc/netplan/01-netcfg.yaml
+---
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    agge:
+      match:
+        macaddress: "${macaddress}"
+      addresses:
+      - "$(curl -s ifconfig.me)/32"
+      nameservers:
+        search: [lqm.io]
+        addresses: [127.0.0.1, 1.1.1.1]
+      routes:
+      - to: "0.0.0.0/0"
+        via: "${gateway}"
+        on-link: true
+      set-name: agge
 E=O=F
   elif [[ -n $serverscomhcp ]]
   then
